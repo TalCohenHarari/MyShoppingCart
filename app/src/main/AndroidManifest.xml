@@ -5,9 +5,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/app_shopping_cart_icon_2"
+        android:icon="@mipmap/app_shopping_cart_icon_3"
         android:label="עגלת הקניות שלי"
-        android:roundIcon="@mipmap/app_shopping_cart_icon_2_round"
+        android:roundIcon="@mipmap/app_shopping_cart_icon_3_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMarketList">
         <activity
