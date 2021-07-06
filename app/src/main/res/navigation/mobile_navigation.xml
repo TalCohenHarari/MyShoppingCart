@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_nav_itemsListFragment_to_allMyShoppingCartsFragment"
             app:destination="@id/nav_allMyShoppingCartsFragment" />
+        <action
+            android:id="@+id/action_nav_itemsListFragment_to_editItemFragment"
+            app:destination="@id/nav_editItemFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_newItemFragment"
@@ -48,6 +51,15 @@
             android:name="Position"
             android:defaultValue="-1"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editItemFragment"
+        android:name="com.example.mymarketlist.ui.editItemn.EditItemFragment"
+        android:label="fragment_edit_item"
+        tools:layout="@layout/fragment_edit_item" >
+        <argument
+            android:name="itemId"
+            app:argType="string" />
     </fragment>
 
 </navigation>

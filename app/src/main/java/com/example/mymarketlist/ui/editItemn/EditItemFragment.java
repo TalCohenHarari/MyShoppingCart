@@ -1,4 +1,4 @@
-package com.example.mymarketlist.ui.newItem;
+package com.example.mymarketlist.ui.editItemn;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -9,9 +9,10 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +26,15 @@ import android.widget.TextView;
 import com.example.mymarketlist.R;
 import com.example.mymarketlist.model.Item;
 import com.example.mymarketlist.model.Model;
+import com.example.mymarketlist.ui.itemsList.ItemsListViewModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 
-public class NewItemFragment extends Fragment {
+public class EditItemFragment extends Fragment {
 
     View view;
     EditText nameEt;
@@ -46,32 +49,46 @@ public class NewItemFragment extends Fragment {
     Item item;
     Dialog dialog;
     Dialog loadingDialog;
+    EditItemViewModel editItemViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Initialise
-        view = inflater.inflate(R.layout.fragment_new_item, container, false);
-        nameEt = view.findViewById(R.id.newItem_name_et);
-        categoryBtn = view.findViewById(R.id.newItem_category_btn);
-        categoryTextTv = view.findViewById(R.id.newItem_category_tv);
-        galleryIcon = view.findViewById(R.id.newItem_galleryIcon_imgV);
-        cameraIcon = view.findViewById(R.id.newItem_cameraIcon_imgV);
-        saveBtn = view.findViewById(R.id.newItem_save_btn);
-        backBtn = view.findViewById(R.id.newItem_back_btn);
-        imageV = view.findViewById(R.id.newItem_image_imgV);
+        view = inflater.inflate(R.layout.fragment_edit_item, container, false);
+        nameEt = view.findViewById(R.id.editItem_name_et);
+        categoryBtn = view.findViewById(R.id.editItem_category_btn);
+        categoryTextTv = view.findViewById(R.id.editItem_category_tv);
+        galleryIcon = view.findViewById(R.id.editItem_galleryIcon_imgV);
+        cameraIcon = view.findViewById(R.id.editItem_cameraIcon_imgV);
+        saveBtn = view.findViewById(R.id.editItem_save_btn);
+        backBtn = view.findViewById(R.id.editItem_back_btn);
+        imageV = view.findViewById(R.id.editItem_image_imgV);
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
-        popupLoadingDialog();
         nameEt.setText("");
         categoryTextTv.setText("");
 
-        //Listeners
-        saveBtn.setOnClickListener(v->saveItem());
-        backBtn.setOnClickListener(v->Navigation.findNavController(view).navigateUp());
+
+        //Bundle
+        String itemId = EditItemFragmentArgs.fromBundle(getArguments()).getItemId();
+
+        //ViewModel
+        editItemViewModel  = new ViewModelProvider(this).get(EditItemViewModel.class);
+        editItemViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                editItemViewModel.getItem(itemId);
+                nameEt.setHint(editItemViewModel.item.getName());
+                categoryTextTv.setText(editItemViewModel.item.getCategory());
+            }
+        });
+
+                //Listeners
+                saveBtn.setOnClickListener(v -> saveItem());
+        backBtn.setOnClickListener(v-> Navigation.findNavController(view).navigateUp());
         cameraIcon.setOnClickListener(v->takePicture());
         galleryIcon.setOnClickListener(v->takePictureFromGallery());
         categoryBtn.setOnClickListener(v->categoryDialog());
-        setUpProgressListener();
 
         return view;
     }
@@ -91,6 +108,7 @@ public class NewItemFragment extends Fragment {
         TextView vegetables = dialog.findViewById(R.id.category_dialog_vegetables);
         TextView clean = dialog.findViewById(R.id.category_dialog_clean);
         TextView cabinet = dialog.findViewById(R.id.category_dialog_cabinet);
+        popupLoadingDialog();
 
         //Listeners
         freezer.setOnClickListener(v->{categoryTextTv.setText(freezer.getText().toString()); dialog.dismiss();});
@@ -117,31 +135,12 @@ public class NewItemFragment extends Fragment {
 
     }
 
-    private void setUpProgressListener() {
-        Model.instance.loadingState.observe(getViewLifecycleOwner(),(state)->{
-            switch(state){
-                case loaded:
-                    break;
-                case loading:
-                    break;
-            }
-        });
-    }
-
     private void saveItem() {
 
         if(!(categoryTextTv.getText().toString().isEmpty()) &&!(nameEt.getText().toString().isEmpty())) {
-            String imageUrl = "";
-            String datePurchase = "";
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDateTime now = LocalDateTime.now();
-                datePurchase = dtf.format(now);
-            }
-            item = new Item(nameEt.getText().toString(), categoryTextTv.getText().toString(), "0",
-                    datePurchase, imageUrl, false);
-
+            Item item= editItemViewModel.item;
+            item.setName(nameEt.getText().toString());
+            item.setCategory(categoryTextTv.getText().toString());
             loadingDialog.show();
             Model.instance.saveItem(item, () -> {
                 if (imageBitmap != null) {
@@ -151,7 +150,8 @@ public class NewItemFragment extends Fragment {
                             item.setImage(url);
                             Model.instance.saveItem(item, () -> {
                                 loadingDialog.dismiss();
-                                Navigation.findNavController(view).navigateUp();});
+                                Navigation.findNavController(view).navigateUp();
+                            });
                         }
                     });
                 } else {

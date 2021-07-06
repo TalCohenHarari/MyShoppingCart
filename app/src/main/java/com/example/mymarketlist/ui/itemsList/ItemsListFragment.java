@@ -99,9 +99,20 @@ public class ItemsListFragment extends Fragment {
         newItem.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_newItemFragment));
         searchBox();
 
-        adapter.setOnClickListener((position) -> {
-            selectedItem=position;
-            adapter.notifyDataSetChanged();
+        adapter.setOnClickListener(new OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                selectedItem=position;
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onEditIconClick(int position) {
+                String itemId = itemsListViewModel.list.get(position).getId();
+                ItemsListFragmentDirections.ActionNavItemsListFragmentToEditItemFragment
+                        action = ItemsListFragmentDirections.actionNavItemsListFragmentToEditItemFragment(itemId);
+                Navigation.findNavController(view).navigate(action);
+            }
         });
         categoryAdapter.setOnClickListener((position) -> {
             //visual
@@ -185,6 +196,7 @@ public class ItemsListFragment extends Fragment {
         CardView cardView;
         LinearLayout linearLayout;
         Item item;
+        ImageView editIconImgV;
 
         public MyViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
@@ -195,6 +207,7 @@ public class ItemsListFragment extends Fragment {
             countTv = itemView.findViewById(R.id.itemsListrow_number_tv);
             cardView = itemView.findViewById(R.id.itemsListrow_cardView);
             linearLayout = itemView.findViewById(R.id.itemsListrow_linearLayout);
+            editIconImgV= itemView.findViewById(R.id.itemsListrow_edit_icon_tv);
 
             plusTv.setOnClickListener(v->{
                 Integer temp = Integer.parseInt(countTv.getText().toString()) +1;
@@ -226,6 +239,14 @@ public class ItemsListFragment extends Fragment {
                     }
                 }
             });
+            editIconImgV.setOnClickListener(v -> {
+                if(listener!=null){
+                    int position=getAdapterPosition();
+                    if(position!= RecyclerView.NO_POSITION){
+                        listener.onEditIconClick(position);
+                    }
+                }
+            });
         }
 
         public void bind(Item item){
@@ -241,6 +262,8 @@ public class ItemsListFragment extends Fragment {
 
     public interface OnItemClickListener{
         void onClick(int position);
+        void onEditIconClick(int position);
+
 
     }
 
@@ -272,6 +295,7 @@ public class ItemsListFragment extends Fragment {
                 holder.plusTv.setBackgroundResource(R.drawable.add_icon);
                 holder.minusTv.setBackgroundResource(R.drawable.minus_icon);
                 holder.countTv.setTextColor(getResources().getColor(R.color.black));
+                holder.editIconImgV.setImageResource(R.drawable.edit_icon_black);
             }
             else{
                 holder.cardView.animate().scaleX(1f);
@@ -281,6 +305,7 @@ public class ItemsListFragment extends Fragment {
                 holder.minusTv.setBackgroundResource(R.drawable.white_minus_icon);
                 holder.countTv.setTextColor(getResources().getColor(R.color.white));
                 holder.linearLayout.setBackgroundColor(holder.linearLayout.getDrawingCacheBackgroundColor());
+                holder.editIconImgV.setImageResource(R.drawable.edit_icon);
             }
         }
         //Give me the items count:

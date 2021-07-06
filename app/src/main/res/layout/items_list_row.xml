@@ -36,15 +36,23 @@
                 app:srcCompat="@drawable/chef" />
         </com.google.android.material.card.MaterialCardView>
 
+        <ImageView
+            android:id="@+id/itemsListrow_edit_icon_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:src="@drawable/edit_icon" />
+
         <TextView
             android:id="@+id/itemsListrow_Name_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:background="#00FFFFFF"
             android:fontFamily="sans-serif"
+            android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:text="Untitled" />
 

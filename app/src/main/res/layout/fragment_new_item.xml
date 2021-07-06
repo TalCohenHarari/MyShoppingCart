@@ -4,18 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/my_market_list_background"
     tools:context=".ui.newItem.NewItemFragment">
 
-
-    <View
-        android:id="@+id/newItem_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#59000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,70 +16,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/newItem_category_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Category:"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold|italic"
-                app:layout_constraintBottom_toBottomOf="@+id/newItem_category_et"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/newItem_category_et"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <EditText
-                android:id="@+id/newItem_category_et"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:textAlignment="viewEnd"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/newItem_category_tv"
-                app:layout_constraintTop_toBottomOf="@+id/newItem_name_et" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/newItem_category_btn"
+                android:layout_width="87dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button"
+                android:text="קטגוריה"
+                android:textColor="@drawable/text_for_button"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/newItem_name_tv"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/newItem_name_tv"
+                app:layout_constraintTop_toBottomOf="@+id/newItem_name_tv" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/newItem_save_btn"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="100dp"
-                android:layout_marginEnd="16dp"
+                android:layout_height="37dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="55dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button"
                 android:text="שמור"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                android:textStyle="bold|italic"
+                android:textColor="@drawable/text_for_button"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/newItem_name_tv" />
+                app:layout_constraintStart_toEndOf="@+id/newItem_back_btn"
+                app:layout_constraintTop_toBottomOf="@+id/newItem_category_btn" />
 
             <TextView
                 android:id="@+id/newItem_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="NAME:"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold|italic"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="שם המוצר :"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/newItem_galleryIcon_imgV" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/newItem_image_imgV"
-                android:layout_width="278dp"
-                android:layout_height="246dp"
+                android:layout_width="296dp"
+                android:layout_height="230dp"
                 android:layout_marginStart="19dp"
                 android:layout_marginTop="31dp"
                 android:layout_marginEnd="19dp"
@@ -99,8 +73,8 @@
 
             <ImageView
                 android:id="@+id/newItem_cameraIcon_imgV"
-                android:layout_width="52dp"
-                android:layout_height="47dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/custom_camera_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/newItem_galleryIcon_imgV"
@@ -114,9 +88,8 @@
                 android:gravity="center"
                 android:text="פריט חדש"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="24sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/newItem_witheLine_tv" />
@@ -125,7 +98,7 @@
                 android:id="@+id/newItem_witheLine_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="#63FFFFFF"
+                android:background="#9CFFFFFF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -134,15 +107,15 @@
                 android:id="@+id/newItem_witheLine2_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="#63FFFFFF"
+                android:background="#9CFFFFFF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/newItem_headLine_tv" />
 
             <ImageView
                 android:id="@+id/newItem_galleryIcon_imgV"
-                android:layout_width="52dp"
-                android:layout_height="47dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/custom_gallery_icon"
@@ -153,45 +126,52 @@
                 android:id="@+id/newItem_name_et"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="75dp"
                 android:layout_marginEnd="8dp"
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:textAlignment="viewEnd"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textColor="#000000"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/newItem_name_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/newItem_name_tv"
+                app:layout_constraintEnd_toStartOf="@+id/newItem_name_tv"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/newItem_name_tv"
                 app:layout_constraintVertical_bias="0.615" />
+
+            <TextView
+                android:id="@+id/newItem_category_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ems="10"
+                android:hint="לא נבחרה קטגוריה"
+                android:inputType="textPersonName"
+                android:textAlignment="viewEnd"
+                android:textColor="#656262"
+                android:textColorHint="#403D3D"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/newItem_category_btn"
+                app:layout_constraintEnd_toEndOf="@+id/newItem_name_et"
+                app:layout_constraintStart_toStartOf="@+id/newItem_name_et"
+                app:layout_constraintTop_toTopOf="@+id/newItem_category_btn" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/newItem_back_btn"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
+                android:layout_height="37dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/button"
                 android:text="הקודם"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                android:textStyle="bold|italic"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/newItem_save_btn"
-                app:layout_constraintStart_toStartOf="@+id/newItem_save_btn"
-                app:layout_constraintTop_toBottomOf="@+id/newItem_save_btn" />
-
-            <ProgressBar
-                android:id="@+id/newItem_progressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="258dp"
-                android:layout_height="210dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@drawable/text_for_button"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/newItem_save_btn"
+                app:layout_constraintEnd_toStartOf="@+id/newItem_save_btn"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/newItem_save_btn" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
