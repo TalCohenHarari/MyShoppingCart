@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view" >
+
+
+    <item android:title="כללי" >
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_homeFragment"
+                    android:icon="@drawable/home_icon"
+                    android:title="עמוד הבית" />
+
+            </group>
+        </menu>
+    </item>
+
+
+    <item android:title="רשימות" >
+        <menu>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_itemsListFragment"
+            android:icon="@drawable/new_shopping_cart_icon"
+            android:title="צור רשימה חדשה" />
+        <item
+            android:id="@+id/menu_myMarketListFragment"
+            android:icon="@drawable/shopping_cart_rtl"
+            android:title="העגלה שלי" />
+        <item
+            android:id="@+id/menu_allMyShoppingCartsFragment"
+            android:icon="@drawable/old_shopping_cart_icon"
+            android:title="כל העגלות הקודמות" />
+    </group>
+        </menu>
+    </item>
+
+</menu>

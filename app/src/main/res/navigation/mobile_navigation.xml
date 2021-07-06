@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_homeFragment">
+
+    <fragment
+        android:id="@+id/nav_homeFragment"
+        android:name="com.example.mymarketlist.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_nav_home_to_itemsListFragment"
+            app:destination="@id/nav_itemsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_itemsListFragment"
+        android:name="com.example.mymarketlist.ui.itemsList.ItemsListFragment"
+        android:label="כל המוצרים"
+        tools:layout="@layout/fragment_items_list">
+        <action
+            android:id="@+id/action_nav_itemsListFragment_to_newItemFragment"
+            app:destination="@id/nav_newItemFragment" />
+        <action
+            android:id="@+id/action_nav_itemsListFragment_to_allMyShoppingCartsFragment"
+            app:destination="@id/nav_allMyShoppingCartsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_newItemFragment"
+        android:name="com.example.mymarketlist.ui.newItem.NewItemFragment"
+        android:label="פריט חדש"
+        tools:layout="@layout/fragment_new_item" />
+    <fragment
+        android:id="@+id/nav_allMyShoppingCartsFragment"
+        android:name="com.example.mymarketlist.ui.allMyShoppingCarts.AllMyShoppingCartsFragment"
+        android:label="רשימות סופר קודמות"
+        tools:layout="@layout/fragment_all_my_shopping_carts" >
+        <action
+            android:id="@+id/action_nav_allMyShoppingCartsFragment_to_nav_myMarketListFragment"
+            app:destination="@id/nav_myMarketListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_myMarketListFragment"
+        android:name="com.example.mymarketlist.ui.myMarketList.MyMarketListFragment"
+        android:label="רשימת הסופר שלי"
+        tools:layout="@layout/fragment_my_market_list">
+        <argument
+            android:name="Position"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>

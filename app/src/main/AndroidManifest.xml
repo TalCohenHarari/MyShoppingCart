@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.mymarketlist">
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/app_shopping_cart_icon_2"
+        android:label="עגלת הקניות שלי"
+        android:roundIcon="@mipmap/app_shopping_cart_icon_2_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyMarketList">
+        <activity
+            android:name=".MainActivity"
+            android:label="עגלת הקניות שלי"
+            android:theme="@style/Theme.MyMarketList.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>
