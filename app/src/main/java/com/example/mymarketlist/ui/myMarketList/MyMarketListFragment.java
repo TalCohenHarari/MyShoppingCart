@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -105,6 +106,11 @@ public class MyMarketListFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
         shareIconBtn.setOnClickListener(v->shareMyShoppingCart());
+        addItemImgV.setOnClickListener(v->{
+            MyMarketListFragmentDirections.ActionNavMyMarketListFragmentToNavAddItemToExistShoppingCartFragment
+                    action = MyMarketListFragmentDirections.actionNavMyMarketListFragmentToNavAddItemToExistShoppingCartFragment().setShoppingCartPosition(shoppingCartPosition);
+            Navigation.findNavController(view).navigate(action);
+        });
 
         return view;
     }
@@ -138,6 +144,7 @@ public class MyMarketListFragment extends Fragment {
                 updateImgV.setVisibility(View.INVISIBLE);
                 addItemTextTv.setVisibility(View.INVISIBLE);
                 addItemImgV.setVisibility(View.INVISIBLE);
+                shareIconBtn.setVisibility(View.INVISIBLE);
             }
             else{
                 priceEd.setVisibility(View.VISIBLE);
@@ -145,6 +152,7 @@ public class MyMarketListFragment extends Fragment {
                 addItemTextTv.setVisibility(View.VISIBLE);
                 priceTextTv.setVisibility(View.VISIBLE);
                 addItemImgV.setVisibility(View.VISIBLE);
+                shareIconBtn.setVisibility(View.VISIBLE);
             }
 
             if (!update && shoppingCarts.size()>0) {

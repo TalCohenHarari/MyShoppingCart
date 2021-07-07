@@ -51,6 +51,9 @@
             android:name="Position"
             android:defaultValue="-1"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_nav_myMarketListFragment_to_nav_addItemToExistShoppingCartFragment"
+            app:destination="@id/nav_addItemToExistShoppingCartFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_editItemFragment"
@@ -60,6 +63,15 @@
         <argument
             android:name="itemId"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_addItemToExistShoppingCartFragment"
+        android:name="com.example.mymarketlist.ui.addItemToExistShoppingCart.AddItemToExistShoppingCartFragment"
+        tools:layout="@layout/fragment_add_item_to_exist_shopping_cart" >
+        <argument
+            android:name="shoppingCartPosition"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
 
 </navigation>

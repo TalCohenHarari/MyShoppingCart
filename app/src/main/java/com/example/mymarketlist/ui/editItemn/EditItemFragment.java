@@ -27,6 +27,7 @@ import com.example.mymarketlist.R;
 import com.example.mymarketlist.model.Item;
 import com.example.mymarketlist.model.Model;
 import com.example.mymarketlist.ui.itemsList.ItemsListViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -65,9 +66,7 @@ public class EditItemFragment extends Fragment {
         backBtn = view.findViewById(R.id.editItem_back_btn);
         imageV = view.findViewById(R.id.editItem_image_imgV);
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
-        nameEt.setText("");
-        categoryTextTv.setText("");
-
+        loadingDialog = new Dialog(getContext());
 
         //Bundle
         String itemId = EditItemFragmentArgs.fromBundle(getArguments()).getItemId();
@@ -78,13 +77,16 @@ public class EditItemFragment extends Fragment {
             @Override
             public void onChanged(List<Item> items) {
                 editItemViewModel.getItem(itemId);
-                nameEt.setHint(editItemViewModel.item.getName());
+                nameEt.setText(editItemViewModel.item.getName());
                 categoryTextTv.setText(editItemViewModel.item.getCategory());
+                if(editItemViewModel.item.getImage()!=null && !editItemViewModel.item.getImage().equals("")){
+                    Picasso.get().load(editItemViewModel.item.getImage()).placeholder(R.drawable.chef).into(imageV);
+                }
             }
         });
 
-                //Listeners
-                saveBtn.setOnClickListener(v -> saveItem());
+        //Listeners
+        saveBtn.setOnClickListener(v -> saveItem());
         backBtn.setOnClickListener(v-> Navigation.findNavController(view).navigateUp());
         cameraIcon.setOnClickListener(v->takePicture());
         galleryIcon.setOnClickListener(v->takePictureFromGallery());
@@ -123,7 +125,6 @@ public class EditItemFragment extends Fragment {
     //----------------------------------------- Loading Dialog -----------------------------------------
     private void popupLoadingDialog() {
 
-        loadingDialog = new Dialog(getContext());
         loadingDialog.setContentView(R.layout.popup_dialog_loading);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             loadingDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));

@@ -1,20 +1,17 @@
-package com.example.mymarketlist.ui.itemsList;
+package com.example.mymarketlist.ui.addItemToExistShoppingCart;
 
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,33 +22,30 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mymarketlist.MyApplication;
 import com.example.mymarketlist.R;
 import com.example.mymarketlist.model.Category;
 import com.example.mymarketlist.model.Item;
 import com.example.mymarketlist.model.Model;
-import com.example.mymarketlist.model.ShoppingCart;
 import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Picasso;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
-public class ItemsListFragment extends Fragment {
+public class AddItemToExistShoppingCartFragment extends Fragment {
+
 
     View view;
-    private ItemsListViewModel itemsListViewModel;
+    AddItemToExistShoppingCartViewModel addItemToExistShoppingCartViewModel;
+    int shoppingCartPosition;
+    String shoppingCartId;
     MyAdapter adapter;
     CategoryAdapter categoryAdapter;
-    ImageButton newItem;
     EditText searchBoxEt;
     Button saveBtn;
     static Map<String,Item> tempList;
@@ -61,25 +55,29 @@ public class ItemsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        //Initialise Params
-        view = inflater.inflate(R.layout.fragment_items_list, container, false);
-        newItem = view.findViewById(R.id.itemsList_add_imgBtn);
-        saveBtn = view.findViewById(R.id.itemsList_save_btn);
-        searchBoxEt = view.findViewById(R.id.itemsList_searchBox_Et);
+        // Initialize
+        view = inflater.inflate(R.layout.fragment_add_item_to_exist_shopping_cart, container, false);
+        saveBtn = view.findViewById(R.id.AddItemToExistShoppingCartList_save_btn);
+        searchBoxEt = view.findViewById(R.id.AddItemToExistShoppingCartList_searchBox_Et);
         tempList = new HashMap<>();
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
 
+
         //ViewModel
-        itemsListViewModel  = new ViewModelProvider(this).get(ItemsListViewModel.class);
-        itemsListViewModel.getData().observe(getViewLifecycleOwner(),
+        addItemToExistShoppingCartViewModel  = new ViewModelProvider(this).get(AddItemToExistShoppingCartViewModel.class);
+        addItemToExistShoppingCartViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), shoppingCarts -> {shoppingCartId=shoppingCarts.get(shoppingCartPosition).getId();});
+        addItemToExistShoppingCartViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
-                    itemsListViewModel.getGeneralData();
+                    addItemToExistShoppingCartViewModel.getGeneralData();
                     adapter.notifyDataSetChanged();
                 });
 
+        //Bundle
+        shoppingCartPosition = AddItemToExistShoppingCartFragmentArgs.fromBundle(getArguments()).getShoppingCartPosition();
+
+
         //items RecyclerView:
-        RecyclerView itemsList = view.findViewById(R.id.itemsList_RecyclerView);
+        RecyclerView itemsList = view.findViewById(R.id.addItemToExistShoppingCartList_RecyclerView);
         itemsList.setHasFixedSize(true);
 //        GridLayoutManager manager = new GridLayoutManager(MyApplication.context,2,GridLayoutManager.VERTICAL,false);
         LinearLayoutManager manager = new LinearLayoutManager(MyApplication.context,RecyclerView.HORIZONTAL,true);
@@ -88,7 +86,7 @@ public class ItemsListFragment extends Fragment {
         itemsList.setAdapter(adapter);
 
         //category RecyclerView:
-        RecyclerView categoryList = view.findViewById(R.id.itemsListCategories_RecyclerView);
+        RecyclerView categoryList = view.findViewById(R.id.AddItemToExistShoppingCartListCategories_RecyclerView);
         categoryList.setHasFixedSize(true);
 //        GridLayoutManager manager = new GridLayoutManager(MyApplication.context,2,GridLayoutManager.VERTICAL,false);
         LinearLayoutManager categoryManager = new LinearLayoutManager(MyApplication.context,RecyclerView.HORIZONTAL,true);
@@ -97,38 +95,28 @@ public class ItemsListFragment extends Fragment {
         categoryList.setAdapter(categoryAdapter);
 
         //Listeners
-        newItem.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_newItemFragment));
         searchBox();
 
-        adapter.setOnClickListener(new OnItemClickListener() {
-            @Override
-            public void onClick(int position) {
-                selectedItem=position;
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onEditIconClick(int position) {
-                String itemId = itemsListViewModel.list.get(position).getId();
-                ItemsListFragmentDirections.ActionNavItemsListFragmentToEditItemFragment
-                        action = ItemsListFragmentDirections.actionNavItemsListFragmentToEditItemFragment(itemId);
-                Navigation.findNavController(view).navigate(action);
-            }
+        adapter.setOnClickListener(position -> {
+            selectedItem=position;
+            adapter.notifyDataSetChanged();
         });
+
         categoryAdapter.setOnClickListener((position) -> {
             //visual
             selectedCategory=position;
             selectedItem = 0;
             categoryAdapter.notifyDataSetChanged();
             //filter items data
-            itemsListViewModel.filterDataByCategory(position);
+            addItemToExistShoppingCartViewModel.filterDataByCategory(position);
             adapter.notifyDataSetChanged();
         });
-//        setUpProgressListener();
+
         saveBtn.setOnClickListener(v->save());
 
         return view;
     }
+
 
     //------------------------------------------Search Box----------------------------------------
 
@@ -140,11 +128,11 @@ public class ItemsListFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 List<Item> searchList = new LinkedList<>();
-                for (Item i:itemsListViewModel.getData().getValue())
+                for (Item i:addItemToExistShoppingCartViewModel.getData().getValue())
                     if(i.getName().contains(s.toString()) && i.getOwner().equals(""))
                         searchList.add(i);
 
-                itemsListViewModel.list=searchList;
+                addItemToExistShoppingCartViewModel.list=searchList;
                 adapter.notifyDataSetChanged();
 
             }
@@ -156,38 +144,18 @@ public class ItemsListFragment extends Fragment {
     private void save() {
 
         if(tempList.size()>0) {
-            ShoppingCart shoppingCart = new ShoppingCart();
-            shoppingCart.setId(UUID.randomUUID().toString());
-            shoppingCart.setDatePurchase("");
-            shoppingCart.setDeleted(false);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDateTime now = LocalDateTime.now();
-                shoppingCart.setDatePurchase(dtf.format(now));
-            }
-            Model.instance.saveShoppingCart(shoppingCart, () -> {
-                for (Map.Entry<String, Item> itemEntry : tempList.entrySet()) {
+
+            for (Map.Entry<String, Item> itemEntry : tempList.entrySet()) {
+
                     String key = itemEntry.getKey();
-                    tempList.get(key).setOwner(shoppingCart.getId());
+                    tempList.get(key).setOwner(shoppingCartId);
                     Item newItem = new Item(tempList.get(key));
-                    Model.instance.saveItem(newItem, () -> {
-                    });
-                }
-            });
+                    Model.instance.saveItem(newItem, () -> {});
+            }
             Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
         }
     }
 
-//    private void setUpProgressListener() {
-//        Model.instance.loadingState.observe(getViewLifecycleOwner(),(state)->{
-//            switch(state){
-//                case loaded:
-//                    break;
-//                case loading:
-//                    break;
-//            }
-//        });
-//    }
 
     //-------------------------------------------Items LIST----------------------------------------
     static class MyViewHolder extends RecyclerView.ViewHolder{
@@ -200,7 +168,6 @@ public class ItemsListFragment extends Fragment {
         CardView cardView;
         LinearLayout linearLayout;
         Item item;
-        ImageView editIconImgV;
 
         public MyViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
@@ -211,7 +178,6 @@ public class ItemsListFragment extends Fragment {
             countTv = itemView.findViewById(R.id.itemsListrow_number_tv);
             cardView = itemView.findViewById(R.id.itemsListrow_cardView);
             linearLayout = itemView.findViewById(R.id.itemsListrow_linearLayout);
-            editIconImgV= itemView.findViewById(R.id.itemsListrow_edit_icon_tv);
 
             plusTv.setOnClickListener(v->{
                 Integer temp = Integer.parseInt(countTv.getText().toString()) +1;
@@ -243,14 +209,6 @@ public class ItemsListFragment extends Fragment {
                     }
                 }
             });
-            editIconImgV.setOnClickListener(v -> {
-                if(listener!=null){
-                    int position=getAdapterPosition();
-                    if(position!= RecyclerView.NO_POSITION){
-                        listener.onEditIconClick(position);
-                    }
-                }
-            });
         }
 
         public void bind(Item item){
@@ -266,9 +224,6 @@ public class ItemsListFragment extends Fragment {
 
     public interface OnItemClickListener{
         void onClick(int position);
-        void onEditIconClick(int position);
-
-
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -287,7 +242,7 @@ public class ItemsListFragment extends Fragment {
         // make the variables bind to the created view from "onCreateViewHolder" function:
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            Item item = itemsListViewModel.list.get(position);
+            Item item = addItemToExistShoppingCartViewModel.list.get(position);
             holder.bind(item);
 
             if(selectedItem==position)
@@ -299,7 +254,6 @@ public class ItemsListFragment extends Fragment {
                 holder.plusTv.setBackgroundResource(R.drawable.add_icon);
                 holder.minusTv.setBackgroundResource(R.drawable.minus_icon);
                 holder.countTv.setTextColor(getResources().getColor(R.color.black));
-                holder.editIconImgV.setImageResource(R.drawable.edit_icon_black);
             }
             else{
                 holder.cardView.animate().scaleX(1f);
@@ -309,13 +263,12 @@ public class ItemsListFragment extends Fragment {
                 holder.minusTv.setBackgroundResource(R.drawable.white_minus_icon);
                 holder.countTv.setTextColor(getResources().getColor(R.color.white));
                 holder.linearLayout.setBackgroundColor(holder.linearLayout.getDrawingCacheBackgroundColor());
-                holder.editIconImgV.setImageResource(R.drawable.edit_icon);
             }
         }
         //Give me the items count:
         @Override
         public int getItemCount() {
-            return itemsListViewModel.list.size();
+            return addItemToExistShoppingCartViewModel.list.size();
         }
     }
 
@@ -331,7 +284,6 @@ public class ItemsListFragment extends Fragment {
             super(itemView);
             nameTv = itemView.findViewById(R.id.categoryRow_name_tv);
             imageV = itemView.findViewById(R.id.categoryRow_image_imgV);
-
             cardView = itemView.findViewById(R.id.category_MaterialcardView);
 
             this.listener=listener;
@@ -372,18 +324,18 @@ public class ItemsListFragment extends Fragment {
         // make the variables bind to the created view from "onCreateViewHolder" function:
         @Override
         public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-            Category category = itemsListViewModel.categoryList.get(position);
+            Category category = addItemToExistShoppingCartViewModel.categoryList.get(position);
             holder.bind(category);
 
             if(selectedCategory==position) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    holder.cardView.setOutlineSpotShadowColor(getResources().getColor(R.color.myPink));
-                    holder.cardView.setOutlineAmbientShadowColor(getResources().getColor(R.color.myPink));
+                    holder.cardView.setOutlineSpotShadowColor(getResources().getColor(R.color.myBlue));
+                    holder.cardView.setOutlineAmbientShadowColor(getResources().getColor(R.color.myBlue));
                 }
                 holder.cardView.setStrokeWidth(2);
-                holder.cardView.setStrokeColor(getResources().getColor(R.color.myPink));
-                holder.nameTv.setTextColor(getResources().getColor(R.color.myPink));
-                holder.imageV.setColorFilter(ContextCompat.getColor(getContext(),R.color.myPink), PorterDuff.Mode.SRC_IN);
+                holder.cardView.setStrokeColor(getResources().getColor(R.color.myBlue));
+                holder.nameTv.setTextColor(getResources().getColor(R.color.myBlue));
+                holder.imageV.setColorFilter(ContextCompat.getColor(getContext(),R.color.myBlue), PorterDuff.Mode.SRC_IN);
             }
             else{
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -399,7 +351,7 @@ public class ItemsListFragment extends Fragment {
         //Give me the items count:
         @Override
         public int getItemCount() {
-            return itemsListViewModel.categoryList.size();
+            return addItemToExistShoppingCartViewModel.categoryList.size();
         }
     }
 }
