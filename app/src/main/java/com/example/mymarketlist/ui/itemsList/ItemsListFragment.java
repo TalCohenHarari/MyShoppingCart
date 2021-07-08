@@ -51,7 +51,7 @@ public class ItemsListFragment extends Fragment {
     private ItemsListViewModel itemsListViewModel;
     MyAdapter adapter;
     CategoryAdapter categoryAdapter;
-    ImageButton newItem;
+    ImageView newItem;
     EditText searchBoxEt;
     Button saveBtn;
     static Map<String,Item> tempList;

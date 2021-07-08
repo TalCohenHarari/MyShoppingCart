@@ -12,7 +12,7 @@
         android:theme="@style/Theme.MyMarketList">
         <activity
             android:name=".MainActivity"
-            android:label="עגלת הקניות שלי"
+            android:label="My Market List"
             android:theme="@style/Theme.MyMarketList.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

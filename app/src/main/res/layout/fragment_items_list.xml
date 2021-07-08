@@ -9,23 +9,17 @@
     tools:context=".ui.itemsList.ItemsListFragment">
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="26dp"
-        android:layout_height="23dp"
+    <ImageView
+        android:id="@+id/itemsList_add_imgBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:cardCornerRadius="50dp"
+        android:clickable="true"
+        android:src="@drawable/circle_add_icon"
+        app:backgroundTint="#00817D7D"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/itemsList_add_imgBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@drawable/add_icon"
-            app:backgroundTint="#00817D7D" />
-    </androidx.cardview.widget.CardView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
 
     <TextView
         android:id="@+id/textView5"
@@ -119,13 +113,10 @@
         android:layout_marginTop="240dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/button"
-        android:drawableRight="@drawable/shopping_cart_icon"
-        android:drawablePadding="10dp"
-        android:gravity="right|center_vertical"
-        android:paddingRight="100dp"
+        android:background="@drawable/button_home_page"
+        android:gravity="center"
         android:text=" שמור עגלה"
-        android:textColor="@drawable/text_for_button"
+        android:textColor="@drawable/text_for_button_home_page"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

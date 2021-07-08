@@ -97,11 +97,12 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
 
         //ViewModel
         myMarketListViewModel  = new ViewModelProvider(this).get(MyMarketListViewModel.class);
-        myMarketListViewModel.getData().observe(getViewLifecycleOwner(), items -> initData(items));
-        myMarketListViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), new Observer<List<ShoppingCart>>() {@Override public void onChanged(List<ShoppingCart> shoppingCarts){
+        myMarketListViewModel.getData().observe(getViewLifecycleOwner(), items -> {
+            initData(items);
             recyclerView.setLayoutAnimation(layoutAnimationController);
             adapter.notifyDataSetChanged();
-        }});
+        });
+        myMarketListViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), new Observer<List<ShoppingCart>>() {@Override public void onChanged(List<ShoppingCart> shoppingCarts){ }});
 
 
         //RecyclerView:
@@ -414,9 +415,9 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         public void bind(Item item){
             countTv.setText(item.getCount());
             nameTv.setText(item.getName());
-            imageV.setImageResource(R.drawable.background2);
+            imageV.setImageResource(R.drawable.chef);
             if(item.getImage()!=null && !item.getImage().equals("")){
-                Picasso.get().load(item.getImage()).placeholder(R.drawable.background2).into(imageV);
+                Picasso.get().load(item.getImage()).placeholder(R.drawable.chef).into(imageV);
             }
         }
     }
