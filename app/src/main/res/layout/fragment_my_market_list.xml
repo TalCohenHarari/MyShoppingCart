@@ -4,33 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/my_market_list_background"
+    android:background="@color/white"
     tools:context=".ui.myMarketList.MyMarketListFragment">
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/myMarketList_swipeRefreshLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/myMarketList_addItem_imgV"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myMarketList_RecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <EditText
         android:id="@+id/myMarketList_price_et"
         android:layout_width="200dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="17dp"
         android:background="@drawable/price_edit_text"
         android:gravity="center_vertical"
         android:hint="0₪"
@@ -41,7 +23,7 @@
         android:textSize="18sp"
         android:textStyle="bold|italic"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/myMarketList_addItem_imgV"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -49,25 +31,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="72dp"
-        android:background="#00FFFFFF"
+        android:layout_marginBottom="32dp"
+        android:background="@color/white"
         android:text=" מחיר "
         android:textColor="#8B000000"
         android:textStyle="bold"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/myMarketList_price_et"
+        app:layout_constraintEnd_toEndOf="@+id/myMarketList_price_et" />
 
     <ImageView
         android:id="@+id/myMarketList_addItem_imgV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="8dp"
         android:background="#00FFFFFF"
         android:src="@drawable/circle_add_icon"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/myMarketList_price_headLine_tv"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -94,14 +76,33 @@
         app:layout_constraintEnd_toStartOf="@+id/myMarketList_price_et"
         app:layout_constraintTop_toTopOf="@+id/myMarketList_price_et" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/myMarketList_share_icon_imgB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:src="@drawable/ic_menu_share"
         android:background="#00FF0000"
+        android:src="@drawable/share_icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/myMarketList_add_item__text_tv" />
+        app:layout_constraintTop_toTopOf="@+id/myMarketList_price_et" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/myMarketList_swipeRefreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        app:layout_constraintBottom_toTopOf="@+id/myMarketList_price_et"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myMarketList_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

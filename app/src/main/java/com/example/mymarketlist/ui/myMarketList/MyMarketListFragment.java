@@ -5,16 +5,17 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +39,6 @@ import com.squareup.picasso.Picasso;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
 import java.util.List;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
@@ -61,10 +61,12 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     TextView addItemTextTv;
     TextView priceTextTv;
     ImageView addItemImgV;
-    ImageButton shareIconBtn;
+    ImageView shareIconBtn;
     Integer noteRowPosition;
     Dialog noteDialog;
     Dialog noteReadOnlyDialog;
+    LayoutAnimationController layoutAnimationController;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,7 +98,10 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         //ViewModel
         myMarketListViewModel  = new ViewModelProvider(this).get(MyMarketListViewModel.class);
         myMarketListViewModel.getData().observe(getViewLifecycleOwner(), items -> initData(items));
-        myMarketListViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), new Observer<List<ShoppingCart>>() {@Override public void onChanged(List<ShoppingCart> shoppingCarts){ }});
+        myMarketListViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), new Observer<List<ShoppingCart>>() {@Override public void onChanged(List<ShoppingCart> shoppingCarts){
+            recyclerView.setLayoutAnimation(layoutAnimationController);
+            adapter.notifyDataSetChanged();
+        }});
 
 
         //RecyclerView:
@@ -107,8 +112,17 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         adapter = new MyAdapter();
         recyclerView.setAdapter(adapter);
 
+        /*RecyclerView Animation:
+        https://youtu.be/5PMI_bHGehg*/
+        layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(),R.anim.layout_animation_slide_right);
+
+
         //Listeners
-        swipeRefreshLayout.setOnRefreshListener(()->myMarketListViewModel.refresh());
+        swipeRefreshLayout.setOnRefreshListener(()->{
+            myMarketListViewModel.refresh();
+//            recyclerView.setLayoutAnimation(layoutAnimationController);
+//            adapter.notifyDataSetChanged();
+        });
         updateImgV.setOnClickListener(v->updatePrice());
         adapter.setOnClickListener(new OnItemClickListener() {@Override public void onClick(int position) {}
             @Override
@@ -137,6 +151,7 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     }
     //-------------------------------------------------------Pop up a little menu for adding some item note or delete exist note---------------------------------------
 
+    //https://www.youtube.com/watch?v=s1fW7CpiB9c&ab_channel=CodinginFlow
     public void showPopUp(View v){
         PopupMenu popup = new PopupMenu(getContext(),v);
         popup.setOnMenuItemClickListener(this);
@@ -320,11 +335,15 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
 
     //------------------------------------------------------------------Update shopping cart price------------------------------------------------------------------------------------------
     private void updatePrice() {
+        //https://youtu.be/fqU4zc_XeX0
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.mixed_anim);
         if(priceEd.getText().toString()!=null && !(priceEd.getText().toString().equals(""))) {
+            updateImgV.startAnimation(animation);
             ShoppingCart shoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
             shoppingCart.setTotalPrice(priceEd.getText().toString());
             Model.instance.saveShoppingCart(shoppingCart,()->{
                 Toast.makeText(getContext(), "המחיר עודכן בהצלחה!", Toast.LENGTH_LONG).show();
+                updateImgV.clearAnimation();
                 update=true;
                 priceEd.setText("");
                 priceEd.setHint(myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition).getTotalPrice()+"₪");
@@ -341,7 +360,7 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
                     swipeRefreshLayout.setRefreshing(false);
                     break;
                 case loading:
-                    swipeRefreshLayout.setRefreshing(true);
+//                    swipeRefreshLayout.setRefreshing(true);
                     break;
             }
         });
@@ -420,7 +439,8 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view= getLayoutInflater().inflate(R.layout.my_market_list_row,parent,false);
+//            View view= getLayoutInflater().inflate(R.layout.my_market_list_row,parent,false);
+            View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.my_market_list_row,parent,false);
             MyViewHolder holder= new MyViewHolder(view,listener);
             return holder;
         }
@@ -428,7 +448,6 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             Item item = myMarketListViewModel.list.get(position);
             holder.bind(item);
-
             if(item.getNote()==null || item.getNote().equals(""))
                 holder.noteImgV.setImageResource(R.drawable.note_gray_icon);
             else

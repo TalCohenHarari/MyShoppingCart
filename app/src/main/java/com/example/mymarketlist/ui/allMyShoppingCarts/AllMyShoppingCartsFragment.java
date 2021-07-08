@@ -14,6 +14,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -42,7 +44,9 @@ public class AllMyShoppingCartsFragment extends Fragment {
     View view;
     AllMyShoppingCartsViewModel allMyShoppingCartsViewModel;
     SwipeRefreshLayout swipeRefreshLayout;
+    RecyclerView itemsList;
     MyAdapter adapter;
+    LayoutAnimationController layoutAnimationController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,11 +61,12 @@ public class AllMyShoppingCartsFragment extends Fragment {
         allMyShoppingCartsViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
                     allMyShoppingCartsViewModel.sortByDate(data);
+                    itemsList.setLayoutAnimation(layoutAnimationController);
                     adapter.notifyDataSetChanged();
                 });
 
         //RecyclerView:
-        RecyclerView itemsList = view.findViewById(R.id.allMyShoppingCartsList_RecyclerView);
+        itemsList = view.findViewById(R.id.allMyShoppingCartsList_RecyclerView);
         itemsList.setHasFixedSize(true);
         GridLayoutManager manager = new GridLayoutManager(MyApplication.context,2,GridLayoutManager.VERTICAL,false);
 //        LinearLayoutManager manager = new LinearLayoutManager(MyApplication.context);
@@ -69,8 +74,14 @@ public class AllMyShoppingCartsFragment extends Fragment {
         adapter = new MyAdapter();
         itemsList.setAdapter(adapter);
 
+         /*RecyclerView Animation:
+        https://youtu.be/5PMI_bHGehg*/
+        layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(),R.anim.layout_animation_slide_right);
+
         //Listeners
-        swipeRefreshLayout.setOnRefreshListener(()->allMyShoppingCartsViewModel.refresh());
+        swipeRefreshLayout.setOnRefreshListener(()->{
+            allMyShoppingCartsViewModel.refresh();
+        });
         adapter.setOnClickListener(position -> {
             AllMyShoppingCartsFragmentDirections.ActionNavAllMyShoppingCartsFragmentToNavMyMarketListFragment
                     action = AllMyShoppingCartsFragmentDirections.actionNavAllMyShoppingCartsFragmentToNavMyMarketListFragment().setPosition(position);
@@ -89,7 +100,7 @@ public class AllMyShoppingCartsFragment extends Fragment {
                     swipeRefreshLayout.setRefreshing(false);
                     break;
                 case loading:
-                    swipeRefreshLayout.setRefreshing(true);
+//                    swipeRefreshLayout.setRefreshing(true);
                     break;
             }
         });

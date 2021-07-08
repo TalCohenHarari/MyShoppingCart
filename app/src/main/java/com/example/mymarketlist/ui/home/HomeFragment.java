@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,9 @@ public class HomeFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_home, container, false);
         Button enterBtn = view.findViewById(R.id.home_enter_btn);
+        view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
+
+
         enterBtn.setOnClickListener(v->{
             Navigation.findNavController(view).popBackStack();
             Navigation.findNavController(v).navigate(R.id.nav_itemsListFragment);

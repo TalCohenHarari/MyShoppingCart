@@ -250,7 +250,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
                 holder.cardView.animate().scaleX(1.1f);
                 holder.cardView.animate().scaleY(1.1f);
                 holder.nameTv.setTextColor(getResources().getColor(R.color.black));
-                holder.linearLayout.setBackgroundColor(getResources().getColor(R.color.white));
+//                holder.linearLayout.setBackgroundColor(getResources().getColor(R.color.white));
                 holder.plusTv.setBackgroundResource(R.drawable.add_icon);
                 holder.minusTv.setBackgroundResource(R.drawable.minus_icon);
                 holder.countTv.setTextColor(getResources().getColor(R.color.black));
@@ -262,7 +262,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
                 holder.plusTv.setBackgroundResource(R.drawable.white_add_icon);
                 holder.minusTv.setBackgroundResource(R.drawable.white_minus_icon);
                 holder.countTv.setTextColor(getResources().getColor(R.color.white));
-                holder.linearLayout.setBackgroundColor(holder.linearLayout.getDrawingCacheBackgroundColor());
+//                holder.linearLayout.setBackgroundColor(holder.linearLayout.getDrawingCacheBackgroundColor());
             }
         }
         //Give me the items count:
@@ -329,13 +329,13 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
 
             if(selectedCategory==position) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    holder.cardView.setOutlineSpotShadowColor(getResources().getColor(R.color.myBlue));
-                    holder.cardView.setOutlineAmbientShadowColor(getResources().getColor(R.color.myBlue));
+                    holder.cardView.setOutlineSpotShadowColor(getResources().getColor(R.color.my_brown));
+                    holder.cardView.setOutlineAmbientShadowColor(getResources().getColor(R.color.my_brown));
                 }
                 holder.cardView.setStrokeWidth(2);
-                holder.cardView.setStrokeColor(getResources().getColor(R.color.myBlue));
-                holder.nameTv.setTextColor(getResources().getColor(R.color.myBlue));
-                holder.imageV.setColorFilter(ContextCompat.getColor(getContext(),R.color.myBlue), PorterDuff.Mode.SRC_IN);
+                holder.cardView.setStrokeColor(getResources().getColor(R.color.my_brown));
+                holder.nameTv.setTextColor(getResources().getColor(R.color.my_brown));
+                holder.imageV.setColorFilter(ContextCompat.getColor(getContext(),R.color.my_brown), PorterDuff.Mode.SRC_IN);
             }
             else{
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

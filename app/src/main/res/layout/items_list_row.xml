@@ -15,7 +15,7 @@
         android:id="@+id/itemsListrow_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00FFFFFF"
+        android:background="#FFFFFF"
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
@@ -48,7 +48,6 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_gravity="center"
-            android:background="#00FFFFFF"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:textColor="@color/white"
