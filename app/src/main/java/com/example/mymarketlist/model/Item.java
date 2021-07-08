@@ -26,6 +26,7 @@ public class Item{
     private String name;
     private String category;
     private String price="0";
+    private String note="";
     private String datePurchase;
     private boolean isChecked;
     private String count="0";
@@ -38,6 +39,7 @@ public class Item{
     final static String NAME = "name";
     final static String CATEGORY = "category";
     final static String PRICE = "price";
+    final static String NOTE = "note";
     final static String DATE_PURCHASE = "datePurchase";
     final static String IS_CHECKED = "isChecked";
     final static String COUNT = "count";
@@ -105,6 +107,7 @@ public class Item{
         this.owner = owner;
     }
     public void setCategory(String category) { this.category = category; }
+    public String getNote() { return note; }
 
     //Getters:
     @NonNull
@@ -139,7 +142,7 @@ public class Item{
         return owner;
     }
     public String getCategory() { return category; }
-
+    public void setNote(String note) { this.note = note; }
 
     public Map<String,Object> toJson(){
         Map<String, Object> json = new HashMap<>();
@@ -148,6 +151,7 @@ public class Item{
         json.put(NAME, name);
         json.put(CATEGORY, category);
         json.put(PRICE, price);
+        json.put(NOTE, note);
         json.put(DATE_PURCHASE, datePurchase);
         json.put(IS_CHECKED, isChecked);
         json.put(COUNT, count);
@@ -166,6 +170,7 @@ public class Item{
         item.name = (String)json.get(NAME);
         item.category = (String)json.get(CATEGORY);
         item.price = (String)json.get(PRICE);
+        item.note = (String)json.get(NOTE);
         item.datePurchase = (String)json.get(DATE_PURCHASE);
         item.isChecked = (boolean)json.get(IS_CHECKED);
         item.count = (String)json.get(COUNT);

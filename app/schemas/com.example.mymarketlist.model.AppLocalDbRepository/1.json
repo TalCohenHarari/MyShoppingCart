@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e7f44895e1335095b9e24201b5c57c72",
+    "identityHash": "7cdad879c068dee8c478e41bc767167b",
     "entities": [
       {
         "tableName": "Item",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `owner` TEXT, `name` TEXT, `category` TEXT, `price` TEXT, `datePurchase` TEXT, `isChecked` INTEGER NOT NULL, `count` TEXT, `image` TEXT, `lastUpdated` INTEGER, `isDeleted` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `owner` TEXT, `name` TEXT, `category` TEXT, `price` TEXT, `note` TEXT, `datePurchase` TEXT, `isChecked` INTEGER NOT NULL, `count` TEXT, `image` TEXT, `lastUpdated` INTEGER, `isDeleted` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -35,6 +35,12 @@
           {
             "fieldPath": "price",
             "columnName": "price",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -132,7 +138,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e7f44895e1335095b9e24201b5c57c72')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7cdad879c068dee8c478e41bc767167b')"
     ]
   }
 }

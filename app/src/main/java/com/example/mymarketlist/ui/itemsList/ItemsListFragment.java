@@ -381,6 +381,7 @@ public class ItemsListFragment extends Fragment {
                     holder.cardView.setOutlineAmbientShadowColor(getResources().getColor(R.color.myPink));
                 }
                 holder.cardView.setStrokeWidth(2);
+
                 holder.cardView.setStrokeColor(getResources().getColor(R.color.myPink));
                 holder.nameTv.setTextColor(getResources().getColor(R.color.myPink));
                 holder.imageV.setColorFilter(ContextCompat.getColor(getContext(),R.color.myPink), PorterDuff.Mode.SRC_IN);

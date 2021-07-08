@@ -1,15 +1,20 @@
 package com.example.mymarketlist.ui.myMarketList;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +44,7 @@ import java.util.List;
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 
-public class MyMarketListFragment extends Fragment {
+public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuItemClickListener{
 
     View view;
     MyMarketListViewModel myMarketListViewModel;
@@ -57,7 +62,9 @@ public class MyMarketListFragment extends Fragment {
     TextView priceTextTv;
     ImageView addItemImgV;
     ImageButton shareIconBtn;
-
+    Integer noteRowPosition;
+    Dialog noteDialog;
+    Dialog noteReadOnlyDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +78,8 @@ public class MyMarketListFragment extends Fragment {
         priceTextTv = view.findViewById(R.id.myMarketList_price_headLine_tv);
         shareIconBtn = view.findViewById(R.id.myMarketList_share_icon_imgB);
         addItemImgV = view.findViewById(R.id.myMarketList_addItem_imgV);
+        noteDialog = new Dialog(getContext());
+        noteReadOnlyDialog = new Dialog(getContext());
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -101,7 +110,19 @@ public class MyMarketListFragment extends Fragment {
         //Listeners
         swipeRefreshLayout.setOnRefreshListener(()->myMarketListViewModel.refresh());
         updateImgV.setOnClickListener(v->updatePrice());
-        adapter.setOnClickListener(position -> {});
+        adapter.setOnClickListener(new OnItemClickListener() {@Override public void onClick(int position) {}
+            @Override
+            public void onNoteClick(int position,ImageView note) {
+                noteRowPosition=position;
+                showPopUp(note);
+            }
+
+            @Override
+            public void onNoteLongClick(int position, ImageView note) {
+                noteRowPosition=position;
+                popupNoteReadDialog(noteRowPosition);
+            }
+        });
         setUpProgressListener();
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
@@ -114,13 +135,88 @@ public class MyMarketListFragment extends Fragment {
 
         return view;
     }
-    //-------------------------------------------------------Share My Shopping Cart----------------------------------------------------------------------
+    //-------------------------------------------------------Pop up a little menu for adding some item note or delete exist note---------------------------------------
 
+    public void showPopUp(View v){
+        PopupMenu popup = new PopupMenu(getContext(),v);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.menu_popup);
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.popupMenu_create_edit:
+                popupNoteDialog(noteRowPosition);
+                break;
+            case R.id.popupMenu_delete:
+                Item foodItem = myMarketListViewModel.list.get(noteRowPosition);
+                foodItem.setNote("");
+                Model.instance.saveItem(foodItem,()->{});
+                break;
+        }
+        return false;
+    }
+
+    private void popupNoteDialog(int noteRowPosition) {
+
+        noteDialog.setContentView(R.layout.popup_dialog_item_note);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            noteDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));
+        noteDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        noteDialog.setCancelable(true);
+        noteDialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
+
+        //Params
+        EditText note = noteDialog.findViewById(R.id.note_text_et);
+        ImageView checked = noteDialog.findViewById(R.id.note_checked);
+        ImageView cancel = noteDialog.findViewById(R.id.note_cencel);
+        Item item = myMarketListViewModel.list.get(noteRowPosition);
+        note.setText(item.getNote());
+
+        //Listeners
+        checked.setOnClickListener(v->{
+            item.setNote(note.getText().toString());
+            Model.instance.saveItem(item,()->{noteDialog.dismiss();});
+        });
+        cancel.setOnClickListener(v->noteDialog.dismiss());
+
+        noteDialog.show();
+
+    }
+    //-------------------------------------------------------Read note----------------------------------------------------------------------
+
+    private void popupNoteReadDialog(int noteRowPosition) {
+
+         noteReadOnlyDialog.setContentView(R.layout.popup_dialog_item_note_read_only);
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+             noteReadOnlyDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));
+        noteReadOnlyDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        noteReadOnlyDialog.setCancelable(true);
+        noteReadOnlyDialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
+
+         //Params
+         ImageView cancel = noteReadOnlyDialog.findViewById(R.id.note_cencel);
+        TextView note = noteReadOnlyDialog.findViewById(R.id.note_read_only_text_et);
+        Item item = myMarketListViewModel.list.get(noteRowPosition);
+        note.setText(item.getNote());
+
+         //Listeners
+         cancel.setOnClickListener(v -> noteReadOnlyDialog.dismiss());
+        noteReadOnlyDialog.show();
+     }
+
+    //-------------------------------------------------------Share My Shopping Cart----------------------------------------------------------------------
     private void shareMyShoppingCart() {
         StringBuilder text = new StringBuilder();
+        text.append(" ("+ myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition).getDatePurchase() +")");
         text.append("רשימת סופר שבועית:");
         text.append("\n\n");
+        String note="";
         for (Item item: myMarketListViewModel.list) {
+            if(!(item.getNote().isEmpty()))
+                note = " (" + item.getNote() + ")";
             text.append(item.getName() + " - " + item.getCount() + "\n");
         }
         String sendText = text.toString();
@@ -205,7 +301,6 @@ public class MyMarketListFragment extends Fragment {
                     break;
 //                case ItemTouchHelper.RIGHT:
 //                    break;
-
             }
         }
 
@@ -259,14 +354,16 @@ public class MyMarketListFragment extends Fragment {
         TextView nameTv;
         ImageView imageV;
         TextView countTv;
+        ImageView noteImgV;
 
         public MyViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             nameTv = itemView.findViewById(R.id.my_market_list_row_Name_textView);
             imageV = itemView.findViewById(R.id.my_market_list_row_image_imgV);
             countTv = itemView.findViewById(R.id.my_market_list_row_number_tv);
-
+            noteImgV = itemView.findViewById(R.id.my_market_list_row_note_imgV);
             this.listener=listener;
+
             itemView.setOnClickListener(v -> {
                 if(listener!=null){
                     int position=getAdapterPosition();
@@ -275,6 +372,24 @@ public class MyMarketListFragment extends Fragment {
                     }
                 }
             });
+            noteImgV.setOnClickListener(v -> {
+                if(listener!=null){
+                    int position=getAdapterPosition();
+                    if(position!= RecyclerView.NO_POSITION){
+                        listener.onNoteClick(position,noteImgV);
+                    }
+                }
+            });
+            noteImgV.setOnLongClickListener(v -> {
+                if(listener!=null){
+                    int position=getAdapterPosition();
+                    if(position!= RecyclerView.NO_POSITION){
+                        listener.onNoteLongClick(position,noteImgV);
+                    }
+                }
+                return false;
+            });
+
         }
 
         public void bind(Item item){
@@ -291,6 +406,8 @@ public class MyMarketListFragment extends Fragment {
 
     public interface OnItemClickListener{
         void onClick(int position);
+        void onNoteClick(int position,ImageView note);
+        void onNoteLongClick(int position,ImageView note);
 
     }
 
@@ -311,6 +428,11 @@ public class MyMarketListFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             Item item = myMarketListViewModel.list.get(position);
             holder.bind(item);
+
+            if(item.getNote()==null || item.getNote().equals(""))
+                holder.noteImgV.setImageResource(R.drawable.note_gray_icon);
+            else
+                holder.noteImgV.setImageResource(R.drawable.note_red_icon);
         }
         @Override
         public int getItemCount() {
