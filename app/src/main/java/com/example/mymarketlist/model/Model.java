@@ -66,6 +66,7 @@ public class Model {
         return allItems;
     }
 
+
     public void saveItem(Item item, OnCompleteListener listener) {
         loadingState.setValue(LoadingState.loading);
         ModelFirebase.saveItem(item, () -> {
@@ -76,6 +77,48 @@ public class Model {
 
     public void updateInLiveItem(Item item, OnCompleteListener listener) {
         ModelFirebase.updateInLiveItem(item, () -> {
+            listener.onComplete();
+        });
+    }
+
+    //---------------------------------------General Items---------------------------------------------
+
+
+    LiveData<List<Item>> allGeneralItems =   AppLocalDB.db.itemDao().getAll();
+
+    public LiveData<List<Item>> getAllGeneralItems() {
+        loadingState.setValue(LoadingState.loading);
+        Long localLastUpdate = Item.getLocalLastUpdateTime();
+        ModelFirebase.getAllGeneralItems(localLastUpdate,(items)->{
+            executorService.execute(()->
+            {
+                Long lastUpdate = new Long(0);
+                for (Item item: items)
+                {
+                    if(item.isDeleted())
+                    {
+                        AppLocalDB.db.itemDao().delete(item);
+                    }
+                    else{
+                        AppLocalDB.db.itemDao().insertAll(item);
+                    }
+                    if(lastUpdate < item.getLastUpdated())
+                    {
+                        lastUpdate = item.getLastUpdated();
+                    }
+                }
+                Item.setLocalLastUpdateTime(lastUpdate);
+                loadingState.postValue(LoadingState.loaded);
+            });
+        });
+
+        return allGeneralItems;
+    }
+
+    public void saveGeneralItem(Item item, OnCompleteListener listener) {
+        loadingState.setValue(LoadingState.loading);
+        ModelFirebase.saveGeneralItem(item, () -> {
+            getAllGeneralItems();
             listener.onComplete();
         });
     }

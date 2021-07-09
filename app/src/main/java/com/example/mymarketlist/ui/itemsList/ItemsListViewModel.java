@@ -21,7 +21,7 @@ public class ItemsListViewModel extends ViewModel {
 
 
     public ItemsListViewModel() {
-        itemsList = Model.instance.getAllItems();
+        itemsList = Model.instance.getAllGeneralItems();
         list = new LinkedList<>();
         categoryList = new LinkedList<>();
         categoryList.add(new Category("מקרר ומקפיא",R.drawable.ic_freezer));

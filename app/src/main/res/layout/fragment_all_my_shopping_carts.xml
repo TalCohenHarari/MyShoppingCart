@@ -11,7 +11,7 @@
         android:id="@+id/allMyShoppingCartsList_no_shopping_cart_text_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="אין עגלות ישנות"
+        android:text="אין עגלות קודמות"
         android:textSize="36sp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/allMyShoppingCartsList_swipeRefreshLayout"

@@ -65,7 +65,7 @@ public class Item{
 
     @Ignore
     public Item(String name,String category,String price, String datePurchase,String image,boolean isDeleted ){
-        this.id = UUID.randomUUID().toString();
+        this.id = name;
         this.owner="";
         this.name=name;
         this.category=category;

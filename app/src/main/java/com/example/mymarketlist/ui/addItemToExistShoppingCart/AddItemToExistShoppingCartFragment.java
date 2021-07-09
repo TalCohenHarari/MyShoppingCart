@@ -68,8 +68,8 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         addItemToExistShoppingCartViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), shoppingCarts -> {shoppingCartId=shoppingCarts.get(shoppingCartPosition).getId();});
         addItemToExistShoppingCartViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
-                    addItemToExistShoppingCartViewModel.getGeneralData();
-                    adapter.notifyDataSetChanged();
+                        addItemToExistShoppingCartViewModel.getGeneralData();
+                        adapter.notifyDataSetChanged();
                 });
 
         //Bundle
@@ -139,10 +139,11 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
 
         });
     }
-
     //-------------------------------------------Save----------------------------------------
+    static int j;
     private void save() {
 
+        j=1;
         if(tempList.size()>0) {
 
             for (Map.Entry<String, Item> itemEntry : tempList.entrySet()) {
@@ -150,9 +151,13 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
                     String key = itemEntry.getKey();
                     tempList.get(key).setOwner(shoppingCartId);
                     Item newItem = new Item(tempList.get(key));
-                    Model.instance.saveItem(newItem, () -> {});
+                    Model.instance.saveItem(newItem, () -> {
+                        if(j==tempList.size())
+                            Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
+                        else
+                            j++;
+                    });
             }
-            Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
         }
     }
 

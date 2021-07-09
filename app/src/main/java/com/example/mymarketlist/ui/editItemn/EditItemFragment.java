@@ -139,30 +139,45 @@ public class EditItemFragment extends Fragment {
     private void saveItem() {
 
         if(!(categoryTextTv.getText().toString().isEmpty()) &&!(nameEt.getText().toString().isEmpty())) {
-            Item item= editItemViewModel.item;
-            item.setName(nameEt.getText().toString());
-            item.setCategory(categoryTextTv.getText().toString());
-            loadingDialog.show();
-            Model.instance.saveItem(item, () -> {
-                if (imageBitmap != null) {
-                    Model.instance.uploadImage(imageBitmap, item.getId(), new Model.UpLoadImageListener() {
-                        @Override
-                        public void onComplete(String url) {
-                            item.setImage(url);
-                            Model.instance.saveItem(item, () -> {
-                                loadingDialog.dismiss();
-                                Navigation.findNavController(view).navigateUp();
-                            });
-                        }
-                    });
-                } else {
-                    loadingDialog.dismiss();
-                    Navigation.findNavController(view).navigateUp();
-                }
-            });
+            item= editItemViewModel.item;
+            //Delete the old item before update (all this because the 'general' item saved by his name (PrimaryKey)):
+            if(!(item.getName().equals(nameEt.getText().toString()))) {
+                item.setDeleted(true);
+                Model.instance.saveGeneralItem(item, () -> {
+                    //Now save the new item:
+                    item.setDeleted(false);
+                    updateItem();
+                });
+            }
+            else{
+                updateItem();
+            }
         }
 
     }
+    private void updateItem() {
+        item.setName(nameEt.getText().toString());
+        item.setCategory(categoryTextTv.getText().toString());
+        loadingDialog.show();
+        Model.instance.saveGeneralItem(item, () -> {
+            if (imageBitmap != null) {
+                Model.instance.uploadImage(imageBitmap, item.getId(), new Model.UpLoadImageListener() {
+                    @Override
+                    public void onComplete(String url) {
+                        item.setImage(url);
+                        Model.instance.saveGeneralItem(item, () -> {
+                            loadingDialog.dismiss();
+                            Navigation.findNavController(view).navigateUp();
+                        });
+                    }
+                });
+            } else {
+                loadingDialog.dismiss();
+                Navigation.findNavController(view).navigateUp();
+            }
+        });
+    }
+
 
     //---------------------------------Image-------------------------------------------------
     static final int REQUEST_IMAGE_CAPTURE = 1;

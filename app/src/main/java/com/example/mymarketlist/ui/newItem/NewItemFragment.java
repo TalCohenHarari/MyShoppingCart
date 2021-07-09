@@ -143,13 +143,13 @@ public class NewItemFragment extends Fragment {
                     datePurchase, imageUrl, false);
 
             loadingDialog.show();
-            Model.instance.saveItem(item, () -> {
+            Model.instance.saveGeneralItem(item, () -> {
                 if (imageBitmap != null) {
                     Model.instance.uploadImage(imageBitmap, item.getId(), new Model.UpLoadImageListener() {
                         @Override
                         public void onComplete(String url) {
                             item.setImage(url);
-                            Model.instance.saveItem(item, () -> {
+                            Model.instance.saveGeneralItem(item, () -> {
                                 loadingDialog.dismiss();
                                 Navigation.findNavController(view).navigateUp();});
                         }

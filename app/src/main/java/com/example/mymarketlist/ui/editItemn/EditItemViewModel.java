@@ -16,7 +16,7 @@ public class EditItemViewModel extends ViewModel {
     private LiveData<List<Item>> itemsList;
     Item item;
 
-    public EditItemViewModel() { itemsList = Model.instance.getAllItems(); item=new Item(); }
+    public EditItemViewModel() { itemsList = Model.instance.getAllGeneralItems(); item=new Item(); }
 
     public LiveData<List<Item>>  getData() {
         return itemsList;

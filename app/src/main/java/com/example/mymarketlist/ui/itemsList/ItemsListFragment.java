@@ -74,8 +74,9 @@ public class ItemsListFragment extends Fragment {
         itemsListViewModel  = new ViewModelProvider(this).get(ItemsListViewModel.class);
         itemsListViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
-                    itemsListViewModel.getGeneralData();
-                    adapter.notifyDataSetChanged();
+
+                        itemsListViewModel.getGeneralData();
+                        adapter.notifyDataSetChanged();
                 });
 
         //items RecyclerView:
@@ -153,8 +154,10 @@ public class ItemsListFragment extends Fragment {
     }
 
     //-------------------------------------------Save----------------------------------------
+    static int i;
     private void save() {
 
+        i=1;
         if(tempList.size()>0) {
             ShoppingCart shoppingCart = new ShoppingCart();
             shoppingCart.setId(UUID.randomUUID().toString());
@@ -171,10 +174,13 @@ public class ItemsListFragment extends Fragment {
                     tempList.get(key).setOwner(shoppingCart.getId());
                     Item newItem = new Item(tempList.get(key));
                     Model.instance.saveItem(newItem, () -> {
+                        if(i==tempList.size())
+                            Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
+                        else
+                            i++;
                     });
                 }
             });
-            Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
         }
     }
 

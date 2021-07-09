@@ -13,7 +13,7 @@
         android:layout_height="200dp"
         android:layout_marginTop="150dp"
         android:src="@drawable/create_new_list"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,7 @@
         android:gravity="center"
         android:text="צור עגלה חדשה על ידי לחיצה על הכפתור פלוס"
         android:textSize="18sp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/myMarketList_swipeRefreshLayout"
         app:layout_constraintStart_toStartOf="@+id/myMarketList_swipeRefreshLayout"
         app:layout_constraintTop_toBottomOf="@+id/myMarketList_list_image_imgV" />
@@ -40,7 +40,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="32dp"
         android:src="@drawable/circle_add_icon"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
