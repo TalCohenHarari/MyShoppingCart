@@ -47,7 +47,7 @@ public class AllMyShoppingCartsFragment extends Fragment {
     RecyclerView itemsList;
     MyAdapter adapter;
     LayoutAnimationController layoutAnimationController;
-
+    TextView text;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,11 +55,14 @@ public class AllMyShoppingCartsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_all_my_shopping_carts, container, false);
         swipeRefreshLayout = view.findViewById(R.id.allMyShoppingCartsList_swipeRefreshLayout);
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
+        text = view.findViewById(R.id.allMyShoppingCartsList_no_shopping_cart_text_tv);
 
         //ViewModel
         allMyShoppingCartsViewModel  = new ViewModelProvider(this).get(AllMyShoppingCartsViewModel.class);
         allMyShoppingCartsViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
+                    if(data.size()==0)
+                        text.setVisibility(View.VISIBLE);
                     allMyShoppingCartsViewModel.sortByDate(data);
                     itemsList.setLayoutAnimation(layoutAnimationController);
                     adapter.notifyDataSetChanged();

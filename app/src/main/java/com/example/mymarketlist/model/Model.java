@@ -74,6 +74,12 @@ public class Model {
         });
     }
 
+    public void updateInLiveItem(Item item, OnCompleteListener listener) {
+        ModelFirebase.updateInLiveItem(item, () -> {
+            listener.onComplete();
+        });
+    }
+
     //---------------------------------------ShoppingCart---------------------------------------------
 
     LiveData<List<ShoppingCart>> allShoppingCart =   AppLocalDB.db.shoppingCartDao().getAll();

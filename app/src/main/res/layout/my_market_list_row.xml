@@ -85,6 +85,16 @@
                 app:layout_constraintTop_toTopOf="@+id/my_market_list_row_number_tv"
                 app:srcCompat="@drawable/note_gray_icon" />
 
+            <ImageView
+                android:id="@+id/my_market_list_row_checked_imgV"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/my_market_list_row_note_imgV"
+                app:layout_constraintEnd_toStartOf="@+id/my_market_list_row_note_imgV"
+                app:layout_constraintTop_toTopOf="@+id/my_market_list_row_note_imgV"
+                app:srcCompat="@drawable/checked_green" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

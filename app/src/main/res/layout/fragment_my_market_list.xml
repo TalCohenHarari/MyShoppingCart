@@ -7,6 +7,43 @@
     android:background="@color/white"
     tools:context=".ui.myMarketList.MyMarketListFragment">
 
+    <ImageView
+        android:id="@+id/myMarketList_list_image_imgV"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="150dp"
+        android:src="@drawable/create_new_list"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/myMarketList_text_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="85dp"
+        android:gravity="center"
+        android:text="צור עגלה חדשה על ידי לחיצה על הכפתור פלוס"
+        android:textSize="18sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/myMarketList_swipeRefreshLayout"
+        app:layout_constraintStart_toStartOf="@+id/myMarketList_swipeRefreshLayout"
+        app:layout_constraintTop_toBottomOf="@+id/myMarketList_list_image_imgV" />
+
+    <ImageView
+        android:id="@+id/myMarketList_add_shopping_cart_butten_imgV"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/circle_add_icon"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <EditText
         android:id="@+id/myMarketList_price_et"
         android:layout_width="200dp"
@@ -83,6 +120,7 @@
         android:layout_marginStart="8dp"
         android:background="#00FF0000"
         android:src="@drawable/share_icon"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/myMarketList_price_et" />
 

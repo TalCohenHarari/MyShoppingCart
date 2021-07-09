@@ -71,6 +71,17 @@ public class ModelFirebase {
 
     }
 
+    public static void updateInLiveItem(Item item,Model.OnCompleteListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(itemCollection).document(item.getId()).set(item.toJson())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        listener.onComplete();
+                    }
+                });
+    }
+
     //--------------------------------------ShoppingCart--------------------------------------------
 
     public interface GetAllShoppingCartsListener {

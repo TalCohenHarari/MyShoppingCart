@@ -16,11 +16,17 @@ public class MyMarketListViewModel extends ViewModel {
     private LiveData<List<ShoppingCart>> shoppingCartList;
     public List<Item> list;
 
+    //For unwanted refresh when phone go to side position
+    public List<Item> tempList;
+    public boolean firstTimeOrInRefresh=true;
+
 
     public MyMarketListViewModel() {
         itemsList = Model.instance.getAllItems();
         shoppingCartList =Model.instance.getAllShoppingCarts();
         list = new LinkedList<>();
+        tempList = new LinkedList<>();
+
     }
 
     public LiveData<List<Item>>  getData() {
