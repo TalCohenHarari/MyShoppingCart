@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mymarketlist.R;
-import com.example.mymarketlist.model.Item;
+import com.example.mymarketlist.model.GeneralItem;
 import com.example.mymarketlist.model.Model;
 
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class NewItemFragment extends Fragment {
     Button backBtn;
     ImageView imageV;
     Bitmap imageBitmap;
-    Item item;
+    GeneralItem generalItem;
     Dialog dialog;
     Dialog loadingDialog;
 
@@ -139,17 +138,17 @@ public class NewItemFragment extends Fragment {
                 LocalDateTime now = LocalDateTime.now();
                 datePurchase = dtf.format(now);
             }
-            item = new Item(nameEt.getText().toString(), categoryTextTv.getText().toString(), "0",
+            generalItem = new GeneralItem(nameEt.getText().toString(), categoryTextTv.getText().toString(), "0",
                     datePurchase, imageUrl, false);
 
             loadingDialog.show();
-            Model.instance.saveGeneralItem(item, () -> {
+            Model.instance.saveGeneralItem(generalItem, () -> {
                 if (imageBitmap != null) {
-                    Model.instance.uploadImage(imageBitmap, item.getId(), new Model.UpLoadImageListener() {
+                    Model.instance.uploadImage(imageBitmap, generalItem.getName(), new Model.UpLoadImageListener() {
                         @Override
                         public void onComplete(String url) {
-                            item.setImage(url);
-                            Model.instance.saveGeneralItem(item, () -> {
+                            generalItem.setImage(url);
+                            Model.instance.saveGeneralItem(generalItem, () -> {
                                 loadingDialog.dismiss();
                                 Navigation.findNavController(view).navigateUp();});
                         }

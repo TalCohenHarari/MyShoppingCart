@@ -24,14 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mymarketlist.R;
-import com.example.mymarketlist.model.Item;
+import com.example.mymarketlist.model.GeneralItem;
 import com.example.mymarketlist.model.Model;
-import com.example.mymarketlist.ui.itemsList.ItemsListViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -47,7 +44,7 @@ public class EditItemFragment extends Fragment {
     Button backBtn;
     ImageView imageV;
     Bitmap imageBitmap;
-    Item item;
+    GeneralItem item;
     Dialog dialog;
     Dialog loadingDialog;
     EditItemViewModel editItemViewModel;
@@ -73,9 +70,9 @@ public class EditItemFragment extends Fragment {
 
         //ViewModel
         editItemViewModel  = new ViewModelProvider(this).get(EditItemViewModel.class);
-        editItemViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+        editItemViewModel.getData().observe(getViewLifecycleOwner(), new Observer<List<GeneralItem>>() {
             @Override
-            public void onChanged(List<Item> items) {
+            public void onChanged(List<GeneralItem> items) {
                 editItemViewModel.getItem(itemId);
                 nameEt.setText(editItemViewModel.item.getName());
                 categoryTextTv.setText(editItemViewModel.item.getCategory());

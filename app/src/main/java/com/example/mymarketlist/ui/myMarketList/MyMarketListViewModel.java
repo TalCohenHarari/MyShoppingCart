@@ -19,6 +19,7 @@ public class MyMarketListViewModel extends ViewModel {
     //For unwanted refresh when phone go to side position
     public List<Item> tempList;
     public boolean firstTimeOrInRefresh=true;
+    public int oldSize=0;
 
 
     public MyMarketListViewModel() {

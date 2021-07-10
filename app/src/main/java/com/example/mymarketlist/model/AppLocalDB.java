@@ -7,8 +7,9 @@ import androidx.room.RoomDatabase;
 import com.example.mymarketlist.MyApplication;
 
 
-@Database(entities = {Item.class,ShoppingCart.class}, version = 1)
+@Database(entities = {GeneralItem.class,Item.class,ShoppingCart.class}, version = 1)
 abstract class AppLocalDbRepository extends RoomDatabase {
+    public abstract GeneralItemDao generalItemDao();
     public abstract ItemDao itemDao();
     public abstract ShoppingCartDao shoppingCartDao();
 }

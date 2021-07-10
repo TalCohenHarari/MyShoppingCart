@@ -86,21 +86,21 @@ public class ModelFirebase {
     //--------------------------------------General Item--------------------------------------------
 
     public interface GetAllGeneralItemsListener {
-        public void onComplete(List<Item> items);
+        public void onComplete(List<GeneralItem> generalItems);
     }
 
     public static void getAllGeneralItems(Long since, GetAllGeneralItemsListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(generalItemCollection)
-                .whereGreaterThanOrEqualTo(Item.LAST_UPDATED,new Timestamp(since,0))
+                .whereGreaterThanOrEqualTo(GeneralItem.LAST_UPDATED,new Timestamp(since,0))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        List<Item> list = new LinkedList<Item>();
+                        List<GeneralItem> list = new LinkedList<GeneralItem>();
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                list.add(Item.create(document.getData()));
+                                list.add(GeneralItem.create(document.getData()));
                             }
                         } else {}
                         listener.onComplete(list);
@@ -109,7 +109,7 @@ public class ModelFirebase {
     }
 
     //Save
-    public static void saveGeneralItem(Item item, Model.OnCompleteListener listener) {
+    public static void saveGeneralItem(GeneralItem item, Model.OnCompleteListener listener) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(generalItemCollection).document(item.getName()).set(item.toJson())

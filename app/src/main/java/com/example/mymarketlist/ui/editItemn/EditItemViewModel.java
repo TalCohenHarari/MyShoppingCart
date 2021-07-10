@@ -3,30 +3,27 @@ package com.example.mymarketlist.ui.editItemn;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.mymarketlist.R;
-import com.example.mymarketlist.model.Category;
-import com.example.mymarketlist.model.Item;
+import com.example.mymarketlist.model.GeneralItem;
 import com.example.mymarketlist.model.Model;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class EditItemViewModel extends ViewModel {
 
-    private LiveData<List<Item>> itemsList;
-    Item item;
+    private LiveData<List<GeneralItem>> generalItemsList;
+    GeneralItem item;
 
-    public EditItemViewModel() { itemsList = Model.instance.getAllGeneralItems(); item=new Item(); }
+    public EditItemViewModel() { generalItemsList = Model.instance.getAllGeneralItems(); item=new GeneralItem(); }
 
-    public LiveData<List<Item>>  getData() {
-        return itemsList;
+    public LiveData<List<GeneralItem>>  getData() {
+        return generalItemsList;
     }
 
-    public Item getItem(String itemId) {
+    public GeneralItem getItem(String itemId) {
 
-        if(itemsList.getValue()!=null){
-            for (Item i: itemsList.getValue()) {
-                if ((i.getId().equals(itemId))){
+        if(generalItemsList.getValue()!=null){
+            for (GeneralItem i: generalItemsList.getValue()) {
+                if ((i.getName().equals(itemId))){
                     item=i;
                     break;
                 }

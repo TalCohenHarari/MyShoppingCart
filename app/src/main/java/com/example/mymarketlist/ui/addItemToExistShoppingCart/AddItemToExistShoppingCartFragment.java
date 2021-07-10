@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mymarketlist.MyApplication;
 import com.example.mymarketlist.R;
 import com.example.mymarketlist.model.Category;
+import com.example.mymarketlist.model.GeneralItem;
 import com.example.mymarketlist.model.Item;
 import com.example.mymarketlist.model.Model;
 import com.google.android.material.card.MaterialCardView;
@@ -48,7 +49,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
     CategoryAdapter categoryAdapter;
     EditText searchBoxEt;
     Button saveBtn;
-    static Map<String,Item> tempList;
+    static Map<String,GeneralItem> tempList;
     int  selectedItem = 0;
     int selectedCategory = 0;
 
@@ -127,8 +128,8 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
             @Override public void afterTextChanged(Editable s) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                List<Item> searchList = new LinkedList<>();
-                for (Item i:addItemToExistShoppingCartViewModel.getData().getValue())
+                List<GeneralItem> searchList = new LinkedList<>();
+                for (GeneralItem i:addItemToExistShoppingCartViewModel.getData().getValue())
                     if(i.getName().contains(s.toString()) && i.getOwner().equals(""))
                         searchList.add(i);
 
@@ -146,7 +147,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         j=1;
         if(tempList.size()>0) {
 
-            for (Map.Entry<String, Item> itemEntry : tempList.entrySet()) {
+            for (Map.Entry<String, GeneralItem> itemEntry : tempList.entrySet()) {
 
                     String key = itemEntry.getKey();
                     tempList.get(key).setOwner(shoppingCartId);
@@ -172,7 +173,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         TextView countTv;
         CardView cardView;
         LinearLayout linearLayout;
-        Item item;
+        GeneralItem item;
 
         public MyViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
@@ -216,7 +217,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
             });
         }
 
-        public void bind(Item item){
+        public void bind(GeneralItem item){
             countTv.setText(item.getCount());
             nameTv.setText(item.getName());
             imageV.setImageResource(R.drawable.chef);
@@ -247,7 +248,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         // make the variables bind to the created view from "onCreateViewHolder" function:
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            Item item = addItemToExistShoppingCartViewModel.list.get(position);
+            GeneralItem item = addItemToExistShoppingCartViewModel.list.get(position);
             holder.bind(item);
 
             if(selectedItem==position)

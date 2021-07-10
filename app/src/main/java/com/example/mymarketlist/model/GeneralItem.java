@@ -14,11 +14,9 @@ import com.google.firebase.firestore.FieldValue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-
 
 @Entity
-public class Item{
+public class GeneralItem {
     @PrimaryKey
     @NonNull
     private String id;
@@ -48,24 +46,24 @@ public class Item{
     final static String IS_DELETED = "isDeleted";
 
 
-    public Item(){}
+    public GeneralItem(){}
     @Ignore
-    public Item(GeneralItem item){
-        this.id = UUID.randomUUID().toString();
-        this.setOwner(item.getOwner());
-        this.name=item.getName();
-        this.category = item.getCategory();
-        this.price=item.getPrice();
-        this.count=item.getCount();
-        this.datePurchase=item.getDatePurchase();
-        this.image=item.getImage();
+    public GeneralItem(GeneralItem generalItem){
+        this.id = generalItem.getName();
+        this.setOwner(generalItem.getOwner());
+        this.name=generalItem.getName();
+        this.category = generalItem.getCategory();
+        this.price=generalItem.getPrice();
+        this.count=generalItem.getCount();
+        this.datePurchase=generalItem.getDatePurchase();
+        this.image=generalItem.getImage();
         this.isDeleted=false;
     }
 
 
     @Ignore
-    public Item(String name,String category,String price, String datePurchase,String image,boolean isDeleted ){
-        this.id = UUID.randomUUID().toString();
+    public GeneralItem(String name, String category, String price, String datePurchase, String image, boolean isDeleted ){
+        this.id = name;
         this.owner="";
         this.name=name;
         this.category=category;
@@ -163,8 +161,8 @@ public class Item{
         return json;
     }
 
-    static public Item create(Map<String,Object> json) {
-        Item item = new Item();
+    static public GeneralItem create(Map<String,Object> json) {
+        GeneralItem item = new GeneralItem();
         item.id = (String)json.get(ID);
         item.owner = (String)json.get(OWNER);
         item.name = (String)json.get(NAME);
@@ -187,17 +185,17 @@ public class Item{
         return item;
     }
 
-    private static final String ITEM_LAST_UPDATE = "ItemLastUpdate";
+    private static final String GENERAL_ITEM_LAST_UPDATE = "GeneralItemLastUpdate";
 
     static public void setLocalLastUpdateTime(Long ts){
         SharedPreferences.Editor editor = MyApplication.context.getSharedPreferences("TAG", Context.MODE_PRIVATE).edit();
-        editor.putLong(ITEM_LAST_UPDATE,ts);
+        editor.putLong(GENERAL_ITEM_LAST_UPDATE,ts);
         editor.commit();
     }
 
     static public Long getLocalLastUpdateTime(){
-         return MyApplication.context.getSharedPreferences("TAG", Context.MODE_PRIVATE)
-                 .getLong(ITEM_LAST_UPDATE,0);
+        return MyApplication.context.getSharedPreferences("TAG", Context.MODE_PRIVATE)
+                .getLong(GENERAL_ITEM_LAST_UPDATE,0);
     }
 
 }

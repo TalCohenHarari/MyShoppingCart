@@ -84,30 +84,30 @@ public class Model {
     //---------------------------------------General Items---------------------------------------------
 
 
-    LiveData<List<Item>> allGeneralItems =   AppLocalDB.db.itemDao().getAll();
+    LiveData<List<GeneralItem>> allGeneralItems =   AppLocalDB.db.generalItemDao().getAll();
 
-    public LiveData<List<Item>> getAllGeneralItems() {
+    public LiveData<List<GeneralItem>> getAllGeneralItems() {
         loadingState.setValue(LoadingState.loading);
-        Long localLastUpdate = Item.getLocalLastUpdateTime();
-        ModelFirebase.getAllGeneralItems(localLastUpdate,(items)->{
+        Long localLastUpdate = GeneralItem.getLocalLastUpdateTime();
+        ModelFirebase.getAllGeneralItems(localLastUpdate,(generalItems)->{
             executorService.execute(()->
             {
                 Long lastUpdate = new Long(0);
-                for (Item item: items)
+                for (GeneralItem gi: generalItems)
                 {
-                    if(item.isDeleted())
+                    if(gi.isDeleted())
                     {
-                        AppLocalDB.db.itemDao().delete(item);
+                        AppLocalDB.db.generalItemDao().delete(gi);
                     }
                     else{
-                        AppLocalDB.db.itemDao().insertAll(item);
+                        AppLocalDB.db.generalItemDao().insertAll(gi);
                     }
-                    if(lastUpdate < item.getLastUpdated())
+                    if(lastUpdate < gi.getLastUpdated())
                     {
-                        lastUpdate = item.getLastUpdated();
+                        lastUpdate = gi.getLastUpdated();
                     }
                 }
-                Item.setLocalLastUpdateTime(lastUpdate);
+                GeneralItem.setLocalLastUpdateTime(lastUpdate);
                 loadingState.postValue(LoadingState.loaded);
             });
         });
@@ -115,9 +115,9 @@ public class Model {
         return allGeneralItems;
     }
 
-    public void saveGeneralItem(Item item, OnCompleteListener listener) {
+    public void saveGeneralItem(GeneralItem generalItem, OnCompleteListener listener) {
         loadingState.setValue(LoadingState.loading);
-        ModelFirebase.saveGeneralItem(item, () -> {
+        ModelFirebase.saveGeneralItem(generalItem, () -> {
             getAllGeneralItems();
             listener.onComplete();
         });

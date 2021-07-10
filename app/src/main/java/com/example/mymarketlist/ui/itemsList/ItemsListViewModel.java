@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.mymarketlist.R;
 import com.example.mymarketlist.model.Category;
+import com.example.mymarketlist.model.GeneralItem;
 import com.example.mymarketlist.model.Item;
 import com.example.mymarketlist.model.Model;
 
@@ -14,8 +15,8 @@ import java.util.List;
 
 public class ItemsListViewModel extends ViewModel {
 
-    private LiveData<List<Item>> itemsList;
-    public List<Item> list;
+    private LiveData<List<GeneralItem>> itemsList;
+    public List<GeneralItem> list;
     public List<Category> categoryList;
 
 
@@ -30,13 +31,13 @@ public class ItemsListViewModel extends ViewModel {
         categoryList.add(new Category("לארונות",R.drawable.ic_closet));
     }
 
-    public LiveData<List<Item>>  getData() {
+    public LiveData<List<GeneralItem>>  getData() {
         return itemsList;
     }
 
-    public List<Item> getGeneralData() {
+    public List<GeneralItem> getGeneralData() {
         list = new LinkedList<>();
-        for ( Item item: itemsList.getValue()) {
+        for ( GeneralItem item: itemsList.getValue()) {
             if(item.getOwner().equals("") && item.getCategory().equals("מקרר ומקפיא"))
                 list.add(item);
         }
@@ -46,7 +47,7 @@ public class ItemsListViewModel extends ViewModel {
     public void filterDataByCategory(int position) {
         list = new LinkedList<>();
         String categoryName = categoryList.get(position).getName();
-        for (Item item: itemsList.getValue()) {
+        for (GeneralItem item: itemsList.getValue()) {
             if(item.getOwner().equals("") && item.getCategory().equals(categoryName))
                 list.add(item);
         }
