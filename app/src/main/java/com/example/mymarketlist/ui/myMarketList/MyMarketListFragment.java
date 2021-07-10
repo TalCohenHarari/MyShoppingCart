@@ -79,7 +79,6 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         //Initialise Params
         view = inflater.inflate(R.layout.fragment_my_market_list, container, false);
         swipeRefreshLayout = view.findViewById(R.id.myMarketList_swipeRefreshLayout);
@@ -115,7 +114,7 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         myMarketListViewModel.getData().observe(getViewLifecycleOwner(), items -> {
             initData(items);
             recyclerView.setLayoutAnimation(layoutAnimationController);
-            adapter.notifyDataSetChanged();
+//            adapter.notifyDataSetChanged();
         });
 
 
@@ -182,7 +181,13 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
             }
         });
 
-
+        //View Display Validation
+        if(myMarketListViewModel.tempList!=null && myMarketListViewModel.tempList.size()!=0)
+        {
+            listImageImgV.setVisibility(View.INVISIBLE);
+            addNewListImgV.setVisibility(View.INVISIBLE);
+            textTv.setVisibility(View.INVISIBLE);
+        }
         return view;
     }
     //--------------------------------------------------------Init the data to theRecyclerView and play with the view----------------------------------------------------------------------
@@ -262,7 +267,8 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
                     myMarketListViewModel.firstTimeOrInRefresh=false;
                 }
                 adapter.notifyDataSetChanged();
-            }}
+            }
+        }
     }
     //-------------------------------------------------------Pop up a little menu for adding some item note or delete exist note---------------------------------------
 
@@ -388,8 +394,7 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     //-------------------------------------------------------Share My Shopping Cart----------------------------------------------------------------------
     private void shareMyShoppingCart() {
         StringBuilder text = new StringBuilder();
-        text.append(" ("+ myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition).getDatePurchase() +")");
-        text.append("רשימת סופר שבועית:");
+        text.append("רשימת סופר שבועית"+" ("+ myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition).getDatePurchase() +")"+":");
         text.append("\n\n");
         String note="";
         for (Item item: myMarketListViewModel.list) {

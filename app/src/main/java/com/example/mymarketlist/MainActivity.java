@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AppBarConfiguration mAppBarConfiguration;
     NavController navController;
     DrawerLayout drawer;
-
+    int selectedItem=R.id.menu_itemsListFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,21 +51,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_homeFragment:
-                while (navController.popBackStack()) ;
+                if(selectedItem!=R.id.menu_homeFragment){
+                    selectedItem=R.id.menu_homeFragment;
+                    while (navController.popBackStack()) ;
+                    navController.navigate(R.id.nav_homeFragment);
+                }
                 drawer.closeDrawer(GravityCompat.START);
-                navController.navigate(R.id.nav_homeFragment);
                 break;
             case R.id.menu_itemsListFragment:
+                if(selectedItem!=R.id.menu_itemsListFragment) {
+                    selectedItem=R.id.menu_itemsListFragment;
+                    navController.navigate(R.id.nav_itemsListFragment);
+                }
                 drawer.closeDrawer(GravityCompat.START);
-                navController.navigate(R.id.nav_itemsListFragment);
                 break;
             case R.id.menu_myMarketListFragment:
+                if(selectedItem!=R.id.menu_myMarketListFragment) {
+                    selectedItem=R.id.menu_myMarketListFragment;
+                    navController.navigate(R.id.nav_myMarketListFragment);
+                }
                 drawer.closeDrawer(GravityCompat.START);
-                navController.navigate(R.id.nav_myMarketListFragment);
                 break;
             case R.id.menu_allMyShoppingCartsFragment:
+                if(selectedItem!=R.id.menu_allMyShoppingCartsFragment) {
+                    selectedItem=R.id.menu_allMyShoppingCartsFragment;
+                    navController.navigate(R.id.nav_allMyShoppingCartsFragment);
+                }
                 drawer.closeDrawer(GravityCompat.START);
-                navController.navigate(R.id.nav_allMyShoppingCartsFragment);
                 break;
         }
         return true;

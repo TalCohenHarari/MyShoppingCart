@@ -1,5 +1,6 @@
 package com.example.mymarketlist.ui.addItemToExistShoppingCart;
 
+import android.app.Dialog;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,6 +54,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
     static Map<String,GeneralItem> tempList;
     int  selectedItem = 0;
     int selectedCategory = 0;
+    Dialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +64,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         saveBtn = view.findViewById(R.id.AddItemToExistShoppingCartList_save_btn);
         searchBoxEt = view.findViewById(R.id.AddItemToExistShoppingCartList_searchBox_Et);
         tempList = new HashMap<>();
+        popupLoadingDialog();
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
 
 
@@ -80,7 +84,6 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         //items RecyclerView:
         RecyclerView itemsList = view.findViewById(R.id.addItemToExistShoppingCartList_RecyclerView);
         itemsList.setHasFixedSize(true);
-//        GridLayoutManager manager = new GridLayoutManager(MyApplication.context,2,GridLayoutManager.VERTICAL,false);
         LinearLayoutManager manager = new LinearLayoutManager(MyApplication.context,RecyclerView.HORIZONTAL,true);
         itemsList.setLayoutManager(manager);
         adapter = new MyAdapter();
@@ -89,7 +92,6 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         //category RecyclerView:
         RecyclerView categoryList = view.findViewById(R.id.AddItemToExistShoppingCartListCategories_RecyclerView);
         categoryList.setHasFixedSize(true);
-//        GridLayoutManager manager = new GridLayoutManager(MyApplication.context,2,GridLayoutManager.VERTICAL,false);
         LinearLayoutManager categoryManager = new LinearLayoutManager(MyApplication.context,RecyclerView.HORIZONTAL,true);
         categoryList.setLayoutManager(categoryManager);
         categoryAdapter = new CategoryAdapter();
@@ -118,7 +120,20 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
         return view;
     }
 
+    //----------------------------------------- Loading Dialog -----------------------------------------
+    private void popupLoadingDialog() {
 
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.popup_dialog_loading);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            loadingDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
+        ProgressBar pb = loadingDialog.findViewById(R.id.loading_progressBar_pb);
+        pb.setVisibility(View.VISIBLE);
+
+    }
     //------------------------------------------Search Box----------------------------------------
 
     private void searchBox() {
@@ -143,7 +158,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
     //-------------------------------------------Save----------------------------------------
     static int j;
     private void save() {
-
+        loadingDialog.show();
         j=1;
         if(tempList.size()>0) {
 
@@ -153,8 +168,10 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
                     tempList.get(key).setOwner(shoppingCartId);
                     Item newItem = new Item(tempList.get(key));
                     Model.instance.saveItem(newItem, () -> {
-                        if(j==tempList.size())
+                        if(j==tempList.size()) {
                             Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
+                            loadingDialog.dismiss();
+                        }
                         else
                             j++;
                     });

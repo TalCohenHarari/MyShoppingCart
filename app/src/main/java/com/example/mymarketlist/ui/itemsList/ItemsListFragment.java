@@ -1,5 +1,6 @@
 package com.example.mymarketlist.ui.itemsList;
 
+import android.app.Dialog;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,6 +59,8 @@ public class ItemsListFragment extends Fragment {
     static Map<String, GeneralItem> tempList;
     int  selectedItem = 0;
     int selectedCategory = 0;
+    Dialog loadingDialog;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +72,7 @@ public class ItemsListFragment extends Fragment {
         saveBtn = view.findViewById(R.id.itemsList_save_btn);
         searchBoxEt = view.findViewById(R.id.itemsList_searchBox_Et);
         tempList = new HashMap<>();
+        popupLoadingDialog();
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
 
         //ViewModel
@@ -159,6 +163,7 @@ public class ItemsListFragment extends Fragment {
 
         i=1;
         if(tempList.size()>0) {
+            loadingDialog.show();
             ShoppingCart shoppingCart = new ShoppingCart();
             shoppingCart.setId(UUID.randomUUID().toString());
             shoppingCart.setDatePurchase("");
@@ -174,14 +179,30 @@ public class ItemsListFragment extends Fragment {
                     tempList.get(key).setOwner(shoppingCart.getId());
                     Item newItem = new Item(tempList.get(key));
                     Model.instance.saveItem(newItem, () -> {
-                        if(i==tempList.size())
+                        if(i==tempList.size()) {
+                            loadingDialog.dismiss();
                             Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
+                        }
                         else
                             i++;
                     });
                 }
             });
         }
+    }
+    //----------------------------------------- Loading Dialog -----------------------------------------
+    private void popupLoadingDialog() {
+
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.popup_dialog_loading);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            loadingDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
+        ProgressBar pb = loadingDialog.findViewById(R.id.loading_progressBar_pb);
+        pb.setVisibility(View.VISIBLE);
+
     }
 
 //    private void setUpProgressListener() {

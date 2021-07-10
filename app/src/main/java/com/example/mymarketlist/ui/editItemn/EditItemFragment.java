@@ -134,8 +134,8 @@ public class EditItemFragment extends Fragment {
     }
 
     private void saveItem() {
-
         if(!(categoryTextTv.getText().toString().isEmpty()) &&!(nameEt.getText().toString().isEmpty())) {
+            loadingDialog.show();
             item= editItemViewModel.item;
             //Delete the old item before update (all this because the 'general' item saved by his name (PrimaryKey)):
             if(!(item.getName().equals(nameEt.getText().toString()))) {
@@ -155,7 +155,6 @@ public class EditItemFragment extends Fragment {
     private void updateItem() {
         item.setName(nameEt.getText().toString());
         item.setCategory(categoryTextTv.getText().toString());
-        loadingDialog.show();
         Model.instance.saveGeneralItem(item, () -> {
             if (imageBitmap != null) {
                 Model.instance.uploadImage(imageBitmap, item.getId(), new Model.UpLoadImageListener() {
@@ -163,14 +162,14 @@ public class EditItemFragment extends Fragment {
                     public void onComplete(String url) {
                         item.setImage(url);
                         Model.instance.saveGeneralItem(item, () -> {
-                            loadingDialog.dismiss();
                             Navigation.findNavController(view).navigateUp();
+                            loadingDialog.dismiss();
                         });
                     }
                 });
             } else {
-                loadingDialog.dismiss();
                 Navigation.findNavController(view).navigateUp();
+                loadingDialog.dismiss();
             }
         });
     }
