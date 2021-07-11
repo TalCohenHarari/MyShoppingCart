@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/shopping_cart_popupMenu_create_edit" android:title="הערה חדשה / ערוך הערה"/>
+    <item android:id="@+id/shopping_cart_popupMenu_delete" android:title="מחק הערה"/>
+    <item android:id="@+id/shopping_cart_popupMenu_delete_shopping_cart" android:title="מחק עגלה לצמיתות"/>
+</menu>

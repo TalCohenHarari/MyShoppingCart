@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".ui.myMarketList.MyMarketListFragment">
 
     <ImageView
@@ -38,7 +37,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="24dp"
         android:src="@drawable/circle_add_icon"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +48,7 @@
         android:layout_width="200dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/price_edit_text"
         android:gravity="center_vertical"
         android:hint="0₪"
@@ -60,7 +59,7 @@
         android:textSize="18sp"
         android:textStyle="bold|italic"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/myMarketList_addItem_imgV"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -78,31 +77,6 @@
         app:layout_constraintEnd_toEndOf="@+id/myMarketList_price_et" />
 
     <ImageView
-        android:id="@+id/myMarketList_addItem_imgV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="#00FFFFFF"
-        android:src="@drawable/circle_add_icon"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/myMarketList_add_item__text_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:gravity="right"
-        android:text="הוספת פריט לעגלה"
-        android:textColor="#000000"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/myMarketList_addItem_imgV"
-        app:layout_constraintEnd_toStartOf="@+id/myMarketList_addItem_imgV"
-        app:layout_constraintTop_toTopOf="@+id/myMarketList_addItem_imgV" />
-
-    <ImageView
         android:id="@+id/myMarketList_update_icon_imgV"
         android:layout_width="22dp"
         android:layout_height="29dp"
@@ -111,17 +85,6 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/myMarketList_price_et"
         app:layout_constraintEnd_toStartOf="@+id/myMarketList_price_et"
-        app:layout_constraintTop_toTopOf="@+id/myMarketList_price_et" />
-
-    <ImageView
-        android:id="@+id/myMarketList_share_icon_imgB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:background="#00FF0000"
-        android:src="@drawable/share_icon"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/myMarketList_price_et" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -134,7 +97,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView12">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/myMarketList_RecyclerView"
@@ -142,5 +105,46 @@
             android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/myMarketList_addItem_imgV"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/circle_add_white_icon"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/myMarketList_swipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/myMarketList_share_icon_imgB"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/share_icon_white"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/myMarketList_swipeRefreshLayout"
+        app:layout_constraintStart_toStartOf="@+id/textView12" />
+
+    <ImageView
+        android:id="@+id/myMarketList_edit_shopping_cart_imgV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/edit_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/myMarketList_addItem_imgV"
+        app:layout_constraintEnd_toStartOf="@+id/myMarketList_addItem_imgV"
+        app:layout_constraintTop_toTopOf="@+id/myMarketList_addItem_imgV" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

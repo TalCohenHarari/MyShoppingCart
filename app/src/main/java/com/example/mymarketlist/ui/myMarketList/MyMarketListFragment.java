@@ -61,20 +61,20 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     ImageView updateImgV;
     RecyclerView recyclerView;
     boolean update=false;
-    TextView addItemTextTv;
     TextView priceTextTv;
     ImageView addItemImgV;
     ImageView shareIconBtn;
     Integer noteRowPosition;
     Dialog noteDialog;
     Dialog noteReadOnlyDialog;
+    Dialog shoppingCartNoteDialog;
     LayoutAnimationController layoutAnimationController;
     ImageView listImageImgV;
     ImageView addNewListImgV;
     TextView textTv;
     Dialog npDialog;
     ImageView noteForColorVisual;
-
+    ImageView editShoppingCartImgV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,16 +84,17 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         swipeRefreshLayout = view.findViewById(R.id.myMarketList_swipeRefreshLayout);
         priceEd = view.findViewById(R.id.myMarketList_price_et);
         updateImgV = view.findViewById(R.id.myMarketList_update_icon_imgV);
-        addItemTextTv= view.findViewById(R.id.myMarketList_add_item__text_tv);
         priceTextTv = view.findViewById(R.id.myMarketList_price_headLine_tv);
         shareIconBtn = view.findViewById(R.id.myMarketList_share_icon_imgB);
         addItemImgV = view.findViewById(R.id.myMarketList_addItem_imgV);
         listImageImgV = view.findViewById(R.id.myMarketList_list_image_imgV);
         addNewListImgV = view.findViewById(R.id.myMarketList_add_shopping_cart_butten_imgV);
         textTv = view.findViewById(R.id.myMarketList_text_tv);
+        editShoppingCartImgV = view.findViewById(R.id.myMarketList_edit_shopping_cart_imgV);
 
         noteDialog = new Dialog(getContext());
         npDialog = new Dialog(getContext());
+        shoppingCartNoteDialog = new Dialog(getContext());
         noteReadOnlyDialog = new Dialog(getContext());
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -135,6 +136,7 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         setUpProgressListener();
         updateImgV.setOnClickListener(v->updatePrice());
         shareIconBtn.setOnClickListener(v->shareMyShoppingCart());
+        editShoppingCartImgV.setOnClickListener(v->shoppingCartShowPopUp(editShoppingCartImgV));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
         addNewListImgV.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_itemsListFragment));
@@ -188,6 +190,9 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
             addNewListImgV.setVisibility(View.INVISIBLE);
             textTv.setVisibility(View.INVISIBLE);
         }
+        else{
+            editShoppingCartImgV.setVisibility(View.INVISIBLE);
+        }
         return view;
     }
     //--------------------------------------------------------Init the data to theRecyclerView and play with the view----------------------------------------------------------------------
@@ -201,9 +206,10 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
                 priceEd.setVisibility(View.INVISIBLE);
                 priceTextTv.setVisibility(View.INVISIBLE);
                 updateImgV.setVisibility(View.INVISIBLE);
-                addItemTextTv.setVisibility(View.INVISIBLE);
                 addItemImgV.setVisibility(View.INVISIBLE);
                 shareIconBtn.setVisibility(View.INVISIBLE);
+                editShoppingCartImgV.setVisibility(View.INVISIBLE);
+
                 listImageImgV.setVisibility(View.VISIBLE);
                 addNewListImgV.setVisibility(View.VISIBLE);
                 textTv.setVisibility(View.VISIBLE);
@@ -211,10 +217,10 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
             else{
                 priceEd.setVisibility(View.VISIBLE);
                 updateImgV.setVisibility(View.VISIBLE);
-                addItemTextTv.setVisibility(View.VISIBLE);
                 priceTextTv.setVisibility(View.VISIBLE);
                 addItemImgV.setVisibility(View.VISIBLE);
                 shareIconBtn.setVisibility(View.VISIBLE);
+                editShoppingCartImgV.setVisibility(View.VISIBLE);
 
                 listImageImgV.setVisibility(View.INVISIBLE);
                 addNewListImgV.setVisibility(View.INVISIBLE);
@@ -241,11 +247,9 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
                 //Get in to this page from all shopping-carts list
                 else if (shoppingCartPosition != -1) {
                     if(todayDate.equals(shoppingCarts.get(shoppingCartPosition).getDatePurchase())) {
-                        addItemTextTv.setVisibility(View.VISIBLE);
                         addItemImgV.setVisibility(View.VISIBLE);
                     }
                     else {
-                        addItemTextTv.setVisibility(View.INVISIBLE);
                         addItemImgV.setVisibility(View.INVISIBLE);
                     }
                     myMarketListViewModel.getGeneralData(shoppingCartPosition, items);
@@ -279,6 +283,12 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         popup.inflate(R.menu.menu_popup);
         popup.show();
     }
+    public void shoppingCartShowPopUp(View v){
+        PopupMenu popup = new PopupMenu(getContext(),v);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.shopping_cart_edit_icon_menu_popup);
+        popup.show();
+    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -292,8 +302,49 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
                 foodItem.setNote("");
                 Model.instance.updateInLiveItem(foodItem,()->{});
                 break;
+            case R.id.shopping_cart_popupMenu_create_edit:
+                shoppingCartPopupNoteDialog();
+                break;
+            case R.id.shopping_cart_popupMenu_delete:
+                ShoppingCart shoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
+                shoppingCart.setNote("");
+                Model.instance.updateInLiveShoppingCart(shoppingCart,()->{});
+                break;
+            case R.id.shopping_cart_popupMenu_delete_shopping_cart:
+                ShoppingCart deletedShoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
+                deletedShoppingCart.setDeleted(true);
+                Model.instance.saveShoppingCart(deletedShoppingCart,()->{
+                    Navigation.findNavController(view).navigate(R.id.nav_allMyShoppingCartsFragment);
+                });
+                break;
         }
         return false;
+    }
+
+    private void shoppingCartPopupNoteDialog() {
+        shoppingCartNoteDialog.setContentView(R.layout.popup_dialog_item_note);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            noteDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));
+        shoppingCartNoteDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        shoppingCartNoteDialog.setCancelable(true);
+        shoppingCartNoteDialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
+
+        //Params
+        EditText note = shoppingCartNoteDialog.findViewById(R.id.note_text_et);
+        ImageView checked = shoppingCartNoteDialog.findViewById(R.id.note_checked);
+        ImageView cancel = shoppingCartNoteDialog.findViewById(R.id.note_cencel);
+        ShoppingCart shoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
+        note.setText(shoppingCart.getNote());
+
+        //Listeners
+        checked.setOnClickListener(v->{
+            shoppingCart.setNote(note.getText().toString());
+            Model.instance.updateInLiveShoppingCart(shoppingCart,()->{});
+            shoppingCartNoteDialog.dismiss();
+        });
+        cancel.setOnClickListener(v->shoppingCartNoteDialog.dismiss());
+
+        shoppingCartNoteDialog.show();
     }
 
     private void popupNoteDialog(int noteRowPosition) {

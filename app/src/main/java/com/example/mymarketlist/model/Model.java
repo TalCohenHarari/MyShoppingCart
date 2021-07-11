@@ -81,6 +81,13 @@ public class Model {
         });
     }
 
+    public void updateInLiveShoppingCart(ShoppingCart shoppingCart, OnCompleteListener listener) {
+        ModelFirebase.updateInLiveShoppingCart(shoppingCart, () -> {
+            listener.onComplete();
+        });
+    }
+
+
     //---------------------------------------General Items---------------------------------------------
 
 

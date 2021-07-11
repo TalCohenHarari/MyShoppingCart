@@ -24,12 +24,14 @@ public class ShoppingCart {
     private String id;
     private String totalPrice="0";
     private String datePurchase;
+    private String note;
     private Long lastUpdated;
     private boolean isDeleted;
 
     final static String ID = "id";
     final static String TOTAL_PRICE = "totalPrice";
     final static String DATE_PURCHASE = "datePurchase";
+    final static String NOTE = "note";
     final static String LAST_UPDATED = "lastUpdated";
     final static String IS_DELETED = "isDeleted";
 
@@ -46,13 +48,13 @@ public class ShoppingCart {
     public void setDatePurchase(String datePurchase) {
         this.datePurchase = datePurchase;
     }
+    public void setNote(String note) { this.note = note; }
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
     public void setLastUpdated(Long lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
-
 
     //Getters:
     @NonNull
@@ -65,6 +67,7 @@ public class ShoppingCart {
     public String getDatePurchase() {
         return datePurchase;
     }
+    public String getNote() { return note; }
     public boolean isDeleted() {
         return isDeleted;
     }
@@ -78,6 +81,7 @@ public class ShoppingCart {
         json.put(ID, id);
         json.put(TOTAL_PRICE, totalPrice);
         json.put(DATE_PURCHASE, datePurchase);
+        json.put(NOTE, note);
         json.put(IS_DELETED,isDeleted);
         json.put(LAST_UPDATED, FieldValue.serverTimestamp());
 
@@ -90,6 +94,7 @@ public class ShoppingCart {
         item.id = (String)json.get(ID);
         item.totalPrice = (String)json.get(TOTAL_PRICE);
         item.datePurchase = (String)json.get(DATE_PURCHASE);
+        item.note = (String)json.get(NOTE);
         item.isDeleted = (boolean)json.get(IS_DELETED);
         Timestamp ts = (Timestamp) json.get(LAST_UPDATED);
 

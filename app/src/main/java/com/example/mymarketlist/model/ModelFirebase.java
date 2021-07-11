@@ -82,7 +82,6 @@ public class ModelFirebase {
                 });
     }
 
-
     //--------------------------------------General Item--------------------------------------------
 
     public interface GetAllGeneralItemsListener {
@@ -161,6 +160,16 @@ public class ModelFirebase {
 
     }
 
+    public static void updateInLiveShoppingCart(ShoppingCart shoppingCart,Model.OnCompleteListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(shoppingCartCollection).document(shoppingCart.getId()).set(shoppingCart.toJson())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        listener.onComplete();
+                    }
+                });
+    }
 
     //--------------------------------SaveImages in storage----------------------------
 
