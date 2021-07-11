@@ -133,7 +133,7 @@ public class AllMyShoppingCartsFragment extends Fragment {
 
         public void bind(ShoppingCart shoppingCart){
             dateTv.setText(shoppingCart.getDatePurchase());
-            imageIv.setImageResource(R.drawable.chef);
+            imageIv.setImageResource(R.drawable.shopping_cart_realistic);
             priceTv.setText(shoppingCart.getTotalPrice()+ "₪");
         }
     }
