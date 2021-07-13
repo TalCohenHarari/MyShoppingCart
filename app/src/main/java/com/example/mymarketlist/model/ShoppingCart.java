@@ -27,6 +27,8 @@ public class ShoppingCart {
     private String note;
     private Long lastUpdated;
     private boolean isDeleted;
+    private String userOwner;
+
 
     final static String ID = "id";
     final static String TOTAL_PRICE = "totalPrice";
@@ -34,6 +36,7 @@ public class ShoppingCart {
     final static String NOTE = "note";
     final static String LAST_UPDATED = "lastUpdated";
     final static String IS_DELETED = "isDeleted";
+    final static String USER_OWNER = "userOwner";
 
 
     public ShoppingCart(){}
@@ -55,18 +58,15 @@ public class ShoppingCart {
     public void setLastUpdated(Long lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
+    public void setUserOwner(String userOwner) { this.userOwner = userOwner; }
+
+
 
     //Getters:
     @NonNull
-    public String getId() {
-        return id;
-    }
-    public String getTotalPrice() {
-        return totalPrice;
-    }
-    public String getDatePurchase() {
-        return datePurchase;
-    }
+    public String getId() { return id; }
+    public String getTotalPrice() { return totalPrice; }
+    public String getDatePurchase() { return datePurchase; }
     public String getNote() { return note; }
     public boolean isDeleted() {
         return isDeleted;
@@ -74,6 +74,7 @@ public class ShoppingCart {
     public Long getLastUpdated() {
         return lastUpdated;
     }
+    public String getUserOwner() { return userOwner; }
 
 
     public Map<String,Object> toJson(){
@@ -83,6 +84,7 @@ public class ShoppingCart {
         json.put(DATE_PURCHASE, datePurchase);
         json.put(NOTE, note);
         json.put(IS_DELETED,isDeleted);
+        json.put(USER_OWNER,userOwner);
         json.put(LAST_UPDATED, FieldValue.serverTimestamp());
 
 
@@ -96,6 +98,7 @@ public class ShoppingCart {
         item.datePurchase = (String)json.get(DATE_PURCHASE);
         item.note = (String)json.get(NOTE);
         item.isDeleted = (boolean)json.get(IS_DELETED);
+        item.userOwner = (String)json.get(USER_OWNER);
         Timestamp ts = (Timestamp) json.get(LAST_UPDATED);
 
         if(ts!=null)

@@ -61,9 +61,11 @@ public class AllMyShoppingCartsFragment extends Fragment {
         allMyShoppingCartsViewModel  = new ViewModelProvider(this).get(AllMyShoppingCartsViewModel.class);
         allMyShoppingCartsViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
-                    if(data.size()==0)
-                        text.setVisibility(View.VISIBLE);
                     allMyShoppingCartsViewModel.sortByDate(data);
+                    if(allMyShoppingCartsViewModel.list.size()==0)
+                        text.setVisibility(View.VISIBLE);
+                    else
+                        text.setVisibility(View.INVISIBLE);
                     itemsList.setLayoutAnimation(layoutAnimationController);
                     adapter.notifyDataSetChanged();
                 });
@@ -86,8 +88,11 @@ public class AllMyShoppingCartsFragment extends Fragment {
             allMyShoppingCartsViewModel.refresh();
         });
         adapter.setOnClickListener(position -> {
+
+            String shoppingCartId = allMyShoppingCartsViewModel.list.get(position).getId();
+            int realPosition= findRealPosition(shoppingCartId);
             AllMyShoppingCartsFragmentDirections.ActionNavAllMyShoppingCartsFragmentToNavMyMarketListFragment
-                    action = AllMyShoppingCartsFragmentDirections.actionNavAllMyShoppingCartsFragmentToNavMyMarketListFragment().setPosition(position);
+                    action = AllMyShoppingCartsFragmentDirections.actionNavAllMyShoppingCartsFragmentToNavMyMarketListFragment().setPosition(realPosition);
             Navigation.findNavController(view).navigate(action);
         });
         setUpProgressListener();
@@ -95,7 +100,14 @@ public class AllMyShoppingCartsFragment extends Fragment {
         return view;
     }
 
-
+    private int findRealPosition(String id){
+        for (int i=0; i<allMyShoppingCartsViewModel.getData().getValue().size();++i) {
+            if(allMyShoppingCartsViewModel.getData().getValue().get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        return 0;
+    }
     private void setUpProgressListener() {
         Model.instance.loadingState.observe(getViewLifecycleOwner(),(state)->{
             switch(state){

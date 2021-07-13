@@ -31,6 +31,7 @@ import com.example.mymarketlist.model.Category;
 import com.example.mymarketlist.model.GeneralItem;
 import com.example.mymarketlist.model.Item;
 import com.example.mymarketlist.model.Model;
+import com.example.mymarketlist.model.ShoppingCart;
 import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Picasso;
 
@@ -47,6 +48,7 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
     AddItemToExistShoppingCartViewModel addItemToExistShoppingCartViewModel;
     int shoppingCartPosition;
     String shoppingCartId;
+    ShoppingCart currentShoppingCart=null;
     MyAdapter adapter;
     CategoryAdapter categoryAdapter;
     EditText searchBoxEt;
@@ -70,7 +72,12 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
 
         //ViewModel
         addItemToExistShoppingCartViewModel  = new ViewModelProvider(this).get(AddItemToExistShoppingCartViewModel.class);
-        addItemToExistShoppingCartViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), shoppingCarts -> {shoppingCartId=shoppingCarts.get(shoppingCartPosition).getId();});
+        addItemToExistShoppingCartViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), shoppingCarts ->
+            {
+//                currentShoppingCart
+                shoppingCartId=shoppingCarts.get(shoppingCartPosition).getId();
+            }
+        );
         addItemToExistShoppingCartViewModel.getData().observe(getViewLifecycleOwner(),
                 (data)->{
                         addItemToExistShoppingCartViewModel.getGeneralData();
@@ -79,7 +86,8 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
 
         //Bundle
         shoppingCartPosition = AddItemToExistShoppingCartFragmentArgs.fromBundle(getArguments()).getShoppingCartPosition();
-
+        if(shoppingCartPosition==-1)
+            shoppingCartPosition = addItemToExistShoppingCartViewModel.getLastUserShoppingCart();
 
         //items RecyclerView:
         RecyclerView itemsList = view.findViewById(R.id.addItemToExistShoppingCartList_RecyclerView);
@@ -165,10 +173,14 @@ public class AddItemToExistShoppingCartFragment extends Fragment {
             for (Map.Entry<String, GeneralItem> itemEntry : tempList.entrySet()) {
 
                     String key = itemEntry.getKey();
-                    tempList.get(key).setOwner(shoppingCartId);
                     Item newItem = new Item(tempList.get(key));
-                    Model.instance.saveItem(newItem, () -> {
+                    newItem.setOwner(shoppingCartId);
+                    newItem.setUserOwner(Model.instance.getUser().getId());
+                    newItem.setDatePurchase(addItemToExistShoppingCartViewModel.getShoppingCartById(shoppingCartId).getDatePurchase());
+                Model.instance.saveItem(newItem, () -> {
                         if(j==tempList.size()) {
+                            Navigation.findNavController(view).popBackStack();
+                            Navigation.findNavController(view).popBackStack();
                             Navigation.findNavController(view).navigate(R.id.nav_myMarketListFragment);
                             loadingDialog.dismiss();
                         }

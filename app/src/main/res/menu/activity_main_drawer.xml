@@ -19,20 +19,36 @@
 
     <item android:title="רשימות" >
         <menu>
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/menu_itemsListFragment"
-            android:icon="@drawable/new_shopping_cart_icon"
-            android:title="צור רשימה חדשה" />
-        <item
-            android:id="@+id/menu_myMarketListFragment"
-            android:icon="@drawable/shopping_cart_rtl"
-            android:title="העגלה שלי" />
-        <item
-            android:id="@+id/menu_allMyShoppingCartsFragment"
-            android:icon="@drawable/old_shopping_cart_icon"
-            android:title="כל העגלות הקודמות" />
-    </group>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_itemsListFragment"
+                    android:icon="@drawable/new_shopping_cart_icon"
+                    android:title="צור רשימה חדשה" />
+                <item
+                    android:id="@+id/menu_myMarketListFragment"
+                    android:icon="@drawable/shopping_cart_rtl"
+                    android:title="העגלה שלי" />
+                <item
+                    android:id="@+id/menu_allMyShoppingCartsFragment"
+                    android:icon="@drawable/old_shopping_cart_icon"
+                    android:title="כל העגלות הקודמות" />
+            </group>
+        </menu>
+    </item>
+
+
+    <item android:title="פרופיל אישי" >
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_myAccount"
+                    android:icon="@drawable/person_icon"
+                    android:title="החשבון שלי" />
+                <item
+                    android:id="@+id/menu_logout"
+                    android:icon="@drawable/logout_icon"
+                    android:title="יציאה" />
+            </group>
         </menu>
     </item>
 

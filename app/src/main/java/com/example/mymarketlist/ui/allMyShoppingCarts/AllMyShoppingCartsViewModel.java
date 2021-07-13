@@ -36,7 +36,19 @@ public class AllMyShoppingCartsViewModel extends ViewModel {
 
     public void sortByDate(List<ShoppingCart> data) {
 
-        list =data;
+//        list =data;
+
+        //Remove all shoppingCarts that not belong to current user
+//        for (int i=0;i<list.size();++i) {
+//            if(!(list.get(i).getUserOwner().equals(Model.instance.getUser().getId())))
+//                list.remove(i);
+//        }
+        list=new LinkedList<>();
+        for (int i=0;i<data.size();++i) {
+            if(data.get(i).getUserOwner().equals(Model.instance.getUser().getId()))
+                list.add(data.get(i));
+        }
+
         Collections.sort(list, (item1, item2) -> {
             Date date1 = stringToDate(item1.getDatePurchase());
             Date date2 = stringToDate(item2.getDatePurchase());

@@ -55,9 +55,6 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     MyAdapter adapter;
     int shoppingCartPosition;
     EditText priceEd;
-    DateTimeFormatter dtf;
-    LocalDateTime now;
-    String todayDate;
     ImageView updateImgV;
     RecyclerView recyclerView;
     boolean update=false;
@@ -97,11 +94,7 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         shoppingCartNoteDialog = new Dialog(getContext());
         noteReadOnlyDialog = new Dialog(getContext());
         view.setLayoutDirection(view.LAYOUT_DIRECTION_LTR );
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            now = LocalDateTime.now();
-            todayDate =dtf.format(now);
-        }
+
 
         //Bundle args
         shoppingCartPosition = MyMarketListFragmentArgs.fromBundle(getArguments()).getPosition();
@@ -111,11 +104,17 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
 
         //ViewModel
         myMarketListViewModel  = new ViewModelProvider(this).get(MyMarketListViewModel.class);
-        myMarketListViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), new Observer<List<ShoppingCart>>() {@Override public void onChanged(List<ShoppingCart> shoppingCarts){ }});
         myMarketListViewModel.getData().observe(getViewLifecycleOwner(), items -> {
             initData(items);
             recyclerView.setLayoutAnimation(layoutAnimationController);
 //            adapter.notifyDataSetChanged();
+        });
+        myMarketListViewModel.getShoppingCartData().observe(getViewLifecycleOwner(), new Observer<List<ShoppingCart>>() {
+            @Override
+            public void onChanged(List<ShoppingCart> shoppingCarts)
+            {
+
+            }
         });
 
 
@@ -141,8 +140,12 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         itemTouchHelper.attachToRecyclerView(recyclerView);
         addNewListImgV.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_itemsListFragment));
         addItemImgV.setOnClickListener(v->{
+            int positionSend = shoppingCartPosition;
+            if(positionSend==-1)
+                positionSend=todayUserShoppingCartPosition;
+
             MyMarketListFragmentDirections.ActionNavMyMarketListFragmentToNavAddItemToExistShoppingCartFragment
-                    action = MyMarketListFragmentDirections.actionNavMyMarketListFragmentToNavAddItemToExistShoppingCartFragment().setShoppingCartPosition(shoppingCartPosition);
+                    action = MyMarketListFragmentDirections.actionNavMyMarketListFragmentToNavAddItemToExistShoppingCartFragment().setShoppingCartPosition(positionSend);
             Navigation.findNavController(view).navigate(action);
         });
         swipeRefreshLayout.setOnRefreshListener(()->{
@@ -196,83 +199,188 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
         return view;
     }
     //--------------------------------------------------------Init the data to theRecyclerView and play with the view----------------------------------------------------------------------
+    Integer todayUserShoppingCartPosition=null;
     private void initData(List<Item> items){
 
-        if(myMarketListViewModel.getShoppingCartData().getValue()!=null){
+        if(myMarketListViewModel.getShoppingCartData().getValue()!=null) {
 
-            //Arguments visibility
-            List<ShoppingCart> shoppingCarts= myMarketListViewModel.getShoppingCartData().getValue();
-            if(shoppingCarts.size()==0 || (!(todayDate.equals(shoppingCarts.get(shoppingCarts.size()-1).getDatePurchase())) && shoppingCartPosition==-1) ){
-                priceEd.setVisibility(View.INVISIBLE);
-                priceTextTv.setVisibility(View.INVISIBLE);
-                updateImgV.setVisibility(View.INVISIBLE);
-                addItemImgV.setVisibility(View.INVISIBLE);
-                shareIconBtn.setVisibility(View.INVISIBLE);
-                editShoppingCartImgV.setVisibility(View.INVISIBLE);
-
-                listImageImgV.setVisibility(View.VISIBLE);
-                addNewListImgV.setVisibility(View.VISIBLE);
-                textTv.setVisibility(View.VISIBLE);
+            List<ShoppingCart> shoppingCarts = myMarketListViewModel.getShoppingCartData().getValue();
+            ShoppingCart todayUserShoppingCart = null;
+            for (int i=0; i<shoppingCarts.size() ; i++) {
+                if (shoppingCarts.get(i).getDatePurchase().equals(myMarketListViewModel.todayDate) && shoppingCarts.get(i).getUserOwner().equals(Model.instance.getUser().getId())) {
+                    todayUserShoppingCartPosition=new Integer(i);
+                    todayUserShoppingCart = shoppingCarts.get(i);
+                    break;
+                }
             }
-            else{
+
+            // If get in from new/edit/drawer shopping cart fragment
+            if (shoppingCartPosition==-1)
+            {
+                //If user has today's shopping cart
+                if(todayUserShoppingCart!=null) {
+                    //Visibility
+                    priceEd.setVisibility(View.VISIBLE);
+                    updateImgV.setVisibility(View.VISIBLE);
+                    priceTextTv.setVisibility(View.VISIBLE);
+                    addItemImgV.setVisibility(View.VISIBLE);
+                    shareIconBtn.setVisibility(View.VISIBLE);
+                    editShoppingCartImgV.setVisibility(View.VISIBLE);
+                    listImageImgV.setVisibility(View.INVISIBLE);
+                    addNewListImgV.setVisibility(View.INVISIBLE);
+                    textTv.setVisibility(View.INVISIBLE);
+
+                    //Init the data
+                    int size = shoppingCarts.size() - 1;
+                    priceEd.setHint(todayUserShoppingCart.getTotalPrice() + "₪");
+                    myMarketListViewModel.getGeneralData(todayUserShoppingCartPosition, items);
+                    //For unwanted refresh when phone go to side position
+                    if (myMarketListViewModel.firstTimeOrInRefresh || myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
+                        myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
+                        myMarketListViewModel.tempList = myMarketListViewModel.list;
+                        myMarketListViewModel.firstTimeOrInRefresh = false;
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+                //If user don't has today's shopping cart
+                else {
+                    //Visibility
+                    priceEd.setVisibility(View.INVISIBLE);
+                    priceTextTv.setVisibility(View.INVISIBLE);
+                    updateImgV.setVisibility(View.INVISIBLE);
+                    addItemImgV.setVisibility(View.INVISIBLE);
+                    shareIconBtn.setVisibility(View.INVISIBLE);
+                    editShoppingCartImgV.setVisibility(View.INVISIBLE);
+                    listImageImgV.setVisibility(View.VISIBLE);
+                    addNewListImgV.setVisibility(View.VISIBLE);
+                    textTv.setVisibility(View.VISIBLE);
+
+                    //Delete data
+                    //???
+                }
+
+            }
+            // If we get in from all shopping carts fragment
+            else if(shoppingCartPosition!=-1) {
+                //Visibility
                 priceEd.setVisibility(View.VISIBLE);
                 updateImgV.setVisibility(View.VISIBLE);
                 priceTextTv.setVisibility(View.VISIBLE);
-                addItemImgV.setVisibility(View.VISIBLE);
+                addItemImgV.setVisibility(View.INVISIBLE);
                 shareIconBtn.setVisibility(View.VISIBLE);
                 editShoppingCartImgV.setVisibility(View.VISIBLE);
-
                 listImageImgV.setVisibility(View.INVISIBLE);
                 addNewListImgV.setVisibility(View.INVISIBLE);
                 textTv.setVisibility(View.INVISIBLE);
-            }
 
-            //Init data to the recyclerList
-            if (!update && shoppingCarts.size()>0) {
-                int size = shoppingCarts.size() - 1;
-                //Get in to this page or from drawer or from save new shopping-cart
-                if (shoppingCartPosition == -1 && todayDate.equals(shoppingCarts.get(size).getDatePurchase())) {
-                    shoppingCartPosition = size;
-                    priceEd.setHint(shoppingCarts.get(size).getTotalPrice() + "₪");
-                    myMarketListViewModel.getGeneralData(size, items);
-                    //For unwanted refresh when phone go to side position
-                    if(myMarketListViewModel.firstTimeOrInRefresh ||  myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
-                        myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
-                        myMarketListViewModel.tempList = myMarketListViewModel.list;
-                        myMarketListViewModel.firstTimeOrInRefresh=false;
-                    }
-
-                    adapter.notifyDataSetChanged();
+                //Init data
+                if (myMarketListViewModel.todayDate.equals(shoppingCarts.get(shoppingCartPosition).getDatePurchase())) {
+                    addItemImgV.setVisibility(View.VISIBLE);
+                } else {
+                    addItemImgV.setVisibility(View.INVISIBLE);
                 }
-                //Get in to this page from all shopping-carts list
-                else if (shoppingCartPosition != -1) {
-                    if(todayDate.equals(shoppingCarts.get(shoppingCartPosition).getDatePurchase())) {
-                        addItemImgV.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        addItemImgV.setVisibility(View.INVISIBLE);
-                    }
-                    myMarketListViewModel.getGeneralData(shoppingCartPosition, items);
-                    //For unwanted refresh when phone go to side position
-                    if(myMarketListViewModel.firstTimeOrInRefresh ||  myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
-                        myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
-                        myMarketListViewModel.tempList = myMarketListViewModel.list;
-                        myMarketListViewModel.firstTimeOrInRefresh=false;
-                    }
-                    priceEd.setHint(shoppingCarts.get(shoppingCartPosition).getTotalPrice() + "₪");
-                    adapter.notifyDataSetChanged();
-                }
-            }else if(update && shoppingCarts.size()>0) {
                 myMarketListViewModel.getGeneralData(shoppingCartPosition, items);
                 //For unwanted refresh when phone go to side position
-                if(myMarketListViewModel.firstTimeOrInRefresh ||  myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
+                if (myMarketListViewModel.firstTimeOrInRefresh || myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
                     myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
                     myMarketListViewModel.tempList = myMarketListViewModel.list;
-                    myMarketListViewModel.firstTimeOrInRefresh=false;
+                    myMarketListViewModel.firstTimeOrInRefresh = false;
                 }
+                priceEd.setHint(shoppingCarts.get(shoppingCartPosition).getTotalPrice() + "₪");
                 adapter.notifyDataSetChanged();
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //-----------------------------------------------------------------------------------------------------------------------//
+//            if(shoppingCarts.size()==0 || (!(todayDate.equals(shoppingCarts.get(shoppingCarts.size()-1).getDatePurchase()))
+//                    && shoppingCartPosition==-1) ){
+//                priceEd.setVisibility(View.INVISIBLE);
+//                priceTextTv.setVisibility(View.INVISIBLE);
+//                updateImgV.setVisibility(View.INVISIBLE);
+//                addItemImgV.setVisibility(View.INVISIBLE);
+//                shareIconBtn.setVisibility(View.INVISIBLE);
+//                editShoppingCartImgV.setVisibility(View.INVISIBLE);
+//
+//                listImageImgV.setVisibility(View.VISIBLE);
+//                addNewListImgV.setVisibility(View.VISIBLE);
+//                textTv.setVisibility(View.VISIBLE);
+//            }
+//            else if( shoppingCarts.size()>0 &&
+//                    shoppingCarts.get(shoppingCarts.size()-1).getUserOwner().equals(Model.instance.getUser().getId()) &&
+//                    todayDate.equals(shoppingCarts.get(shoppingCarts.size()-1).getDatePurchase())){
+//                priceEd.setVisibility(View.VISIBLE);
+//                updateImgV.setVisibility(View.VISIBLE);
+//                priceTextTv.setVisibility(View.VISIBLE);
+//                addItemImgV.setVisibility(View.VISIBLE);
+//                shareIconBtn.setVisibility(View.VISIBLE);
+//                editShoppingCartImgV.setVisibility(View.VISIBLE);
+//
+//                listImageImgV.setVisibility(View.INVISIBLE);
+//                addNewListImgV.setVisibility(View.INVISIBLE);
+//                textTv.setVisibility(View.INVISIBLE);
+//            }
+
+            //Init data to the recyclerList
+
+//                if (!update && shoppingCarts.size() > 0) {
+//                    int size = shoppingCarts.size() - 1;
+//                    if(shoppingCarts.get(size).getUserOwner().equals(Model.instance.getUser().getId())) {
+//                    //Get in to this page or from drawer or from save new shopping-cart
+//                    if (shoppingCartPosition == -1 && todayDate.equals(shoppingCarts.get(size).getDatePurchase())
+//                            && shoppingCarts.get(size).getUserOwner().equals(Model.instance.getUser().getId())) {
+//                        shoppingCartPosition = size;
+//                        priceEd.setHint(shoppingCarts.get(size).getTotalPrice() + "₪");
+//                        myMarketListViewModel.getGeneralData(size, items);
+//                        //For unwanted refresh when phone go to side position
+//                        if (myMarketListViewModel.firstTimeOrInRefresh || myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
+//                            myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
+//                            myMarketListViewModel.tempList = myMarketListViewModel.list;
+//                            myMarketListViewModel.firstTimeOrInRefresh = false;
+//                        }
+//
+//                        adapter.notifyDataSetChanged();
+//                    }
+//                    //Get in to this page from all shopping-carts list
+//                    else if (shoppingCartPosition != -1  && shoppingCarts.get(shoppingCartPosition).getUserOwner().equals(Model.instance.getUser().getId())) {
+//                        if (todayDate.equals(shoppingCarts.get(shoppingCartPosition).getDatePurchase())) {
+//                            addItemImgV.setVisibility(View.VISIBLE);
+//                        } else {
+//                            addItemImgV.setVisibility(View.INVISIBLE);
+//                        }
+//                        myMarketListViewModel.getGeneralData(shoppingCartPosition, items);
+//                        //For unwanted refresh when phone go to side position
+//                        if (myMarketListViewModel.firstTimeOrInRefresh || myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
+//                            myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
+//                            myMarketListViewModel.tempList = myMarketListViewModel.list;
+//                            myMarketListViewModel.firstTimeOrInRefresh = false;
+//                        }
+//                        priceEd.setHint(shoppingCarts.get(shoppingCartPosition).getTotalPrice() + "₪");
+//                        adapter.notifyDataSetChanged();
+//                    }
+//                } else if (update && shoppingCarts.size() > 0 && shoppingCarts.get(shoppingCartPosition).getUserOwner().equals(Model.instance.getUser().getId())) {
+//                    myMarketListViewModel.getGeneralData(shoppingCartPosition, items);
+//                    //For unwanted refresh when phone go to side position
+//                    if (myMarketListViewModel.firstTimeOrInRefresh || myMarketListViewModel.oldSize < myMarketListViewModel.list.size()) {
+//                        myMarketListViewModel.oldSize = myMarketListViewModel.list.size();
+//                        myMarketListViewModel.tempList = myMarketListViewModel.list;
+//                        myMarketListViewModel.firstTimeOrInRefresh = false;
+//                    }
+//                    adapter.notifyDataSetChanged();
+//                }
+//            }
+//        }
     }
     //-------------------------------------------------------Pop up a little menu for adding some item note or delete exist note---------------------------------------
 
@@ -445,13 +553,22 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
     //-------------------------------------------------------Share My Shopping Cart----------------------------------------------------------------------
     private void shareMyShoppingCart() {
         StringBuilder text = new StringBuilder();
-        text.append("רשימת סופר שבועית"+" ("+ myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition).getDatePurchase() +")"+":");
+        int share;
+        if(shoppingCartPosition==-1)
+            share=todayUserShoppingCartPosition;
+        else
+            share=shoppingCartPosition;
+        text.append("רשימת סופר שבועית"+" ("+ myMarketListViewModel.getShoppingCartData().getValue().get(share).getDatePurchase() +")"+":");
         text.append("\n\n");
         String note="";
         for (Item item: myMarketListViewModel.list) {
-            if(!(item.getNote().isEmpty()))
+            text.append(item.getName() + " - " + item.getCount());
+            if(!(item.getNote().isEmpty())) {
                 note = " (" + item.getNote() + ")";
-            text.append(item.getName() + " - " + item.getCount() + "\n");
+                text.append(note + "\n");
+            }
+            else
+                text.append("\n");
         }
         String sendText = text.toString();
         Intent sendIntent = new Intent();
@@ -505,19 +622,34 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
 
 
     //------------------------------------------------------------------Update shopping cart price------------------------------------------------------------------------------------------
+    ShoppingCart sc = null;
     private void updatePrice() {
         //https://youtu.be/fqU4zc_XeX0
         Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.mixed_anim);
         if(priceEd.getText().toString()!=null && !(priceEd.getText().toString().equals(""))) {
             updateImgV.startAnimation(animation);
-            ShoppingCart shoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
-            shoppingCart.setTotalPrice(priceEd.getText().toString());
-            Model.instance.saveShoppingCart(shoppingCart,()->{
+            if(shoppingCartPosition!=-1)
+                 sc = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
+            else
+            {
+                List<ShoppingCart> shoppingCarts = myMarketListViewModel.getShoppingCartData().getValue();
+
+                for (int i=0; i<shoppingCarts.size() ; i++) {
+                    if (shoppingCarts.get(i).getDatePurchase().equals(myMarketListViewModel.todayDate) && shoppingCarts.get(i).getUserOwner().equals(Model.instance.getUser().getId())) {
+                        sc = shoppingCarts.get(i);
+                        break;
+                    }
+                }
+            }
+
+
+            sc.setTotalPrice(priceEd.getText().toString());
+            Model.instance.saveShoppingCart(sc,()->{
                 Toast.makeText(getContext(), "המחיר עודכן בהצלחה!", Toast.LENGTH_LONG).show();
                 updateImgV.clearAnimation();
                 update=true;
                 priceEd.setText("");
-                priceEd.setHint(myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition).getTotalPrice()+"₪");
+                priceEd.setHint(sc.getTotalPrice()+"₪");
             });
         }
     }

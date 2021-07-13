@@ -11,6 +11,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -24,6 +28,7 @@ import java.util.List;
 
 public class ModelFirebase {
 
+    final static String userCollection = "users";
     final static String itemCollection = "items";
     final static String shoppingCartCollection = "shoppingCarts";
     final static String generalItemCollection = "generalItems";
@@ -31,6 +36,131 @@ public class ModelFirebase {
 
     private ModelFirebase() {}
 
+
+    //--------------------------------------User--------------------------------------------
+
+    public interface GetAllUsersListener {
+        public void onComplete(List<User> users);
+    }
+
+    public static void getAllUsers(Long since, GetAllUsersListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(userCollection)
+                .whereGreaterThanOrEqualTo(User.LAST_UPDATED,new Timestamp(since,0))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<User> list = new LinkedList<User>();
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                list.add(User.create(document.getData()));
+                            }
+                        } else {}
+                        listener.onComplete(list);
+                    }
+                });
+    }
+
+    //Save and signUp:
+    public static void saveUser(User user, String action, Model.OnCompleteListener listener) {
+
+        if (action.equals("signUp"))
+        {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
+                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                    user.setId(firebaseUser.getUid());
+                    save(user,action,()->listener.onComplete());
+                }
+            });
+        }
+        else if(action.equals("updateEmail") || action.equals("updatePassword") || action.equals("updateEmailAndPassword") )//If it's an update username based on firebase authentication:
+        {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if(action.equals("updateEmail"))
+                currentUser.updateEmail(user.getEmail()).addOnCompleteListener(task -> { if (task.isSuccessful()) { save(user,action,()->listener.onComplete()); } });
+            else if(action.equals("updatePassword"))
+                currentUser.updatePassword(user.getPassword()).addOnCompleteListener(task -> { if (task.isSuccessful()) { save(user,action,()->listener.onComplete()); } });
+            else{
+                currentUser.updateEmail(user.getEmail()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        currentUser.updatePassword(user.getPassword()).addOnCompleteListener(task1 -> { if (task1.isSuccessful()) save(user,action,()->listener.onComplete()); });
+                    }
+                });
+            }
+        }
+        else if(action.equals("delete")) //delete user 'Auth'
+        {
+            save(user,action,()->{
+                FirebaseUser deletedUser = FirebaseAuth.getInstance().getCurrentUser();
+                deletedUser.delete().addOnCompleteListener(task -> { if (task.isSuccessful()) { listener.onComplete(); } });});
+        }
+        else //If it's an update details:
+            save(user,action,listener);
+    }
+
+    public static void save(User user,String action ,Model.OnCompleteListener listener) {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(userCollection).document(user.getId()).set(user.toJson()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        getCurrentUser(listener);
+                    }}).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onComplete();
+            }
+        });
+    }
+
+    public static void login(String userEmail, String password, Model.OnCompleteListener listener) {
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        mAuth.signInWithEmailAndPassword(userEmail, password)
+                .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            getCurrentUser(listener);
+                        }
+                    }
+                });
+    }
+
+    public static void isLoggedIn(Model.OnCompleteListener listener) {
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            Model.instance.loadingStateDialog.setValue(Model.LoadingState.loading);
+            getCurrentUser(()->listener.onComplete());
+        }
+    }
+
+    public static void getCurrentUser(Model.OnCompleteListener listener)
+    {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+        db.collection(userCollection).document(firebaseUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Model.instance.setUser(User.create(documentSnapshot.getData()),()->listener.onComplete());
+            }
+        });
+    }
+
+    public static void signOut(){
+        FirebaseAuth.getInstance().signOut();
+    }
     //--------------------------------------Item--------------------------------------------
 
     public interface GetAllItemsListener {

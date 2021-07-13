@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_homeFragment">
+    app:startDestination="@id/nav_loginFragment">
 
     <fragment
         android:id="@+id/nav_homeFragment"
@@ -72,6 +72,24 @@
             android:name="shoppingCartPosition"
             app:argType="integer"
             android:defaultValue="-1" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_loginFragment"
+        android:name="com.example.mymarketlist.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_nav_loginFragment_to_nav_itemsListFragment"
+            app:destination="@id/nav_itemsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_signUpFragment"
+        android:name="com.example.mymarketlist.ui.signUp.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_nav_signUpFragment_to_nav_itemsListFragment"
+            app:destination="@id/nav_itemsListFragment" />
     </fragment>
 
 </navigation>

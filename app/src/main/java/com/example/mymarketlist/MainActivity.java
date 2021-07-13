@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.mymarketlist.model.Model;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -78,6 +79,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     navController.navigate(R.id.nav_allMyShoppingCartsFragment);
 //                }
                 drawer.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.menu_logout:
+                //SignOut from session:
+                Model.instance.signOut();
+                //Pop the all prev pages to start over:
+                while(navController.popBackStack());
+                //Set user on Model to null
+                Model.instance.setUser(null,()->{});
+                //Set item menu visible if he is np visible:
+                drawer.closeDrawer(GravityCompat.START);
+                navController.navigate(R.id.nav_loginFragment);
                 break;
         }
         return true;

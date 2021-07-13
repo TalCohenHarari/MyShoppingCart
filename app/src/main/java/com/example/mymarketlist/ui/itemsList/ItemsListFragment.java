@@ -168,6 +168,7 @@ public class ItemsListFragment extends Fragment {
             shoppingCart.setId(UUID.randomUUID().toString());
             shoppingCart.setDatePurchase("");
             shoppingCart.setDeleted(false);
+            shoppingCart.setUserOwner(Model.instance.getUser().getId());
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDateTime now = LocalDateTime.now();
@@ -178,6 +179,8 @@ public class ItemsListFragment extends Fragment {
                     String key = itemEntry.getKey();
                     tempList.get(key).setOwner(shoppingCart.getId());
                     Item newItem = new Item(tempList.get(key));
+                    newItem.setUserOwner(Model.instance.getUser().getId());
+                    newItem.setDatePurchase(shoppingCart.getDatePurchase());
                     Model.instance.saveItem(newItem, () -> {
                         if(i==tempList.size()) {
                             loadingDialog.dismiss();

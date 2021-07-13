@@ -13,6 +13,11 @@ public class Model {
 
     final public static Model instance = new Model();
     ExecutorService executorService = Executors.newCachedThreadPool();
+    User user;
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user,OnCompleteListener listener) { this.user = user; listener.onComplete(); }
 
     private Model() {}
 
@@ -32,6 +37,68 @@ public class Model {
             new MutableLiveData<LoadingState>(LoadingState.loaded);
 
 
+    //---------------------------------------User---------------------------------------------
+
+    LiveData<List<User>> allUsers =   AppLocalDB.db.userDao().getAll();
+
+    public LiveData<List<User>> getAllUsers() {
+        loadingState.setValue(LoadingState.loading);
+        //read the local last update time
+        Long localLastUpdate = User.getLocalLastUpdateTime();
+        //ge all updates from firebase
+        ModelFirebase.getAllUsers(localLastUpdate,(users)->{
+            executorService.execute(()->
+            {
+                Long lastUpdate = new Long(0);
+                //update the local DB with the new records
+                for (User user: users)
+                {
+                    if(user.isDeleted())
+                    {
+                        AppLocalDB.db.userDao().delete(user);
+                    }
+                    else{
+                        AppLocalDB.db.userDao().insertAll(user);
+                    }
+                    //update the local last update time
+                    if(lastUpdate < user.lastUpdated)
+                    {
+                        lastUpdate = user.lastUpdated;
+                    }
+                }
+                User.setLocalLastUpdateTime(lastUpdate);
+                //postValue make it happen in main thread of the view and not in this thread:
+                loadingState.postValue(LoadingState.loaded);
+                //read all the data from the local DB -> return the data to the caller
+                //automatically perform by room -> live data gets updated
+            });
+        });
+
+        return allUsers;
+    }
+
+    public void saveUser(User user, String action, OnCompleteListener listener) {
+        loadingState.setValue(LoadingState.loading);
+        ModelFirebase.saveUser(user, action, () -> {
+            getAllUsers();
+            listener.onComplete();
+        });
+    }
+
+    public void login(String userEmail, String password, OnCompleteListener listener) {
+        ModelFirebase.login(userEmail, password, () -> listener.onComplete());
+    }
+
+    public void isLoggedIn(OnCompleteListener listener) {
+        ModelFirebase.isLoggedIn(() ->{
+            loadingStateDialog.setValue(LoadingState.loaded);
+            listener.onComplete();
+        });
+    }
+
+    public static void signOut() {
+        ModelFirebase.signOut();
+    }
 
     //---------------------------------------Item---------------------------------------------
 

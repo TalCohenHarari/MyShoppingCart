@@ -35,6 +35,26 @@ public class AddItemToExistShoppingCartViewModel extends ViewModel {
         return shoppingCartList;
     }
 
+    public ShoppingCart getShoppingCartById(String shoppingCardId){
+        if(shoppingCartList.getValue()!=null) {
+            for (ShoppingCart s : shoppingCartList.getValue()) {
+                if (s.getId().equals(shoppingCardId)) {
+                    return s;
+                }
+            }
+        }
+        return null;
+    }
+    public int getLastUserShoppingCart(){
+        if(shoppingCartList.getValue()!=null) {
+            for (int i=0; i< shoppingCartList.getValue().size(); ++i) {
+                if(shoppingCartList.getValue().get(i).getUserOwner().equals(Model.instance.getUser().getId())){
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
     public LiveData<List<GeneralItem>>  getData() {
         return itemsList;
     }

@@ -22,6 +22,7 @@ public class Item{
     @PrimaryKey
     @NonNull
     private String id;
+    private String userOwner;
     private String owner;
     private String name;
     private String category;
@@ -46,6 +47,7 @@ public class Item{
     final static String IMAGE = "image";
     final static String LAST_UPDATED = "lastUpdated";
     final static String IS_DELETED = "isDeleted";
+    final static String USER_OWNER = "userOwner";
 
 
     public Item(){}
@@ -53,6 +55,7 @@ public class Item{
     public Item(GeneralItem item){
         this.id = UUID.randomUUID().toString();
         this.setOwner(item.getOwner());
+        this.userOwner=Model.instance.user.getId();
         this.name=item.getName();
         this.category = item.getCategory();
         this.price=item.getPrice();
@@ -67,6 +70,7 @@ public class Item{
     public Item(String name,String category,String price, String datePurchase,String image,boolean isDeleted ){
         this.id = UUID.randomUUID().toString();
         this.owner="";
+        this.userOwner=Model.instance.user.getId();
         this.name=name;
         this.category=category;
         this.price=price;
@@ -108,6 +112,7 @@ public class Item{
     }
     public void setCategory(String category) { this.category = category; }
     public String getNote() { return note; }
+    public void setUserOwner(String userOwner) { this.userOwner = userOwner; }
 
     //Getters:
     @NonNull
@@ -143,6 +148,7 @@ public class Item{
     }
     public String getCategory() { return category; }
     public void setNote(String note) { this.note = note; }
+    public String getUserOwner() { return userOwner; }
 
     public Map<String,Object> toJson(){
         Map<String, Object> json = new HashMap<>();
@@ -157,6 +163,7 @@ public class Item{
         json.put(COUNT, count);
         json.put(IMAGE, image);
         json.put(IS_DELETED,isDeleted);
+        json.put(USER_OWNER,userOwner);
         json.put(LAST_UPDATED, FieldValue.serverTimestamp());
 
 
@@ -176,6 +183,7 @@ public class Item{
         item.count = (String)json.get(COUNT);
         item.image = (String)json.get(IMAGE);
         item.isDeleted = (boolean)json.get(IS_DELETED);
+        item.userOwner = (String)json.get(USER_OWNER);
         Timestamp ts = (Timestamp) json.get(LAST_UPDATED);
 
         if(ts!=null)
