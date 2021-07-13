@@ -419,9 +419,15 @@ public class MyMarketListFragment extends Fragment implements PopupMenu.OnMenuIt
                 Model.instance.updateInLiveShoppingCart(shoppingCart,()->{});
                 break;
             case R.id.shopping_cart_popupMenu_delete_shopping_cart:
-                ShoppingCart deletedShoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(shoppingCartPosition);
+                int deletePosition;
+                if(shoppingCartPosition==-1)
+                    deletePosition=todayUserShoppingCartPosition;
+                else
+                    deletePosition=shoppingCartPosition;
+                ShoppingCart deletedShoppingCart = myMarketListViewModel.getShoppingCartData().getValue().get(deletePosition);
                 deletedShoppingCart.setDeleted(true);
                 Model.instance.saveShoppingCart(deletedShoppingCart,()->{
+                    while (Navigation.findNavController(view).popBackStack());
                     Navigation.findNavController(view).navigate(R.id.nav_allMyShoppingCartsFragment);
                 });
                 break;
