@@ -2,7 +2,9 @@ package com.example.mymarketlist.ui.signUp;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +38,22 @@ public class SignUpFragment extends Fragment {
 
 
         //Listeners:
-
+        newAccountTv.setOnClickListener(v-> Navigation.findNavController(v).navigateUp());
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if( ((AppCompatActivity)getActivity()).getSupportActionBar()!=null)
+            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if( ((AppCompatActivity)getActivity()).getSupportActionBar()!=null)
+            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 }

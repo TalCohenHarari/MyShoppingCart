@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg"
     android:layoutDirection="ltr"
     tools:context=".ui.login.LoginFragment">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="500dp"
+        android:layout_height="1000dp"
+        android:src="@drawable/bg1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#61000000"
+        android:background="#86000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +30,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -68,7 +80,7 @@
                 android:background="@drawable/white_edit_text"
                 android:ems="10"
                 android:hint="סיסמה"
-                android:inputType="textEmailAddress"
+                android:inputType="textVisiblePassword"
                 android:paddingEnd="35dp"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#A6FFFFFF"
@@ -82,7 +94,7 @@
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="150dp"
+                android:layout_marginTop="110dp"
                 android:text="התחברות"
                 android:textColor="#FFFFFF"
                 android:textSize="36sp"
@@ -101,7 +113,7 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:backgroundTint="#85FFFFFF"
+                app:backgroundTint="#BCFFFFFF"
                 app:layout_constraintEnd_toEndOf="@+id/login_password_et"
                 app:layout_constraintStart_toStartOf="@+id/login_password_et"
                 app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
@@ -191,8 +203,8 @@
 
             <ImageView
                 android:id="@+id/login_facebook_icon_imgV"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="130dp"
@@ -206,8 +218,8 @@
 
             <ImageView
                 android:id="@+id/login_instagram_icon_imgV"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/instagram_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/login_facebook_icon_imgV"
@@ -217,8 +229,8 @@
 
             <ImageView
                 android:id="@+id/login_twitter_icon_imgV"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/twitter_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/login_instagram_icon_imgV"
@@ -228,8 +240,8 @@
 
             <ImageView
                 android:id="@+id/login_google_icon_imgV"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="130dp"
                 android:src="@drawable/google_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/login_twitter_icon_imgV"
@@ -239,7 +251,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
