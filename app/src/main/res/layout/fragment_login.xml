@@ -143,7 +143,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/login_new_account_tv" />
 
             <TextView
-                android:id="@+id/login_new_account_tv2"
+                android:id="@+id/login_forgot_password_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

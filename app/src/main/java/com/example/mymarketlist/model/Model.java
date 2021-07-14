@@ -17,12 +17,20 @@ public class Model {
     public User getUser() {
         return user;
     }
-    public void setUser(User user,OnCompleteListener listener) { this.user = user; listener.onComplete(); }
+    public void setUser(User user,isLoginSuccessCompleteListener listener) { this.user = user; listener.onComplete(true); }
 
     private Model() {}
 
     public interface OnCompleteListener {
         void onComplete();
+    }
+
+    public interface onResentPasswordCompleteListener {
+        void onComplete(boolean isSuccess);
+    }
+
+    public interface isLoginSuccessCompleteListener {
+        void onComplete(boolean isSuccess);
     }
 
     public enum LoadingState {
@@ -79,14 +87,14 @@ public class Model {
 
     public void saveUser(User user, String action, OnCompleteListener listener) {
         loadingState.setValue(LoadingState.loading);
-        ModelFirebase.saveUser(user, action, () -> {
+        ModelFirebase.saveUser(user, action, (isSuccess) -> {
             getAllUsers();
             listener.onComplete();
         });
     }
 
-    public void login(String userEmail, String password, OnCompleteListener listener) {
-        ModelFirebase.login(userEmail, password, () -> listener.onComplete());
+    public void login(String userEmail, String password, isLoginSuccessCompleteListener listener) {
+        ModelFirebase.login(userEmail, password, (isSuccess) -> listener.onComplete(isSuccess));
     }
 
     public void isLoggedIn(OnCompleteListener listener) {
@@ -98,6 +106,12 @@ public class Model {
 
     public static void signOut() {
         ModelFirebase.signOut();
+    }
+
+    public void resentPassword(String email,onResentPasswordCompleteListener listener) {
+        ModelFirebase.resentPassword(email,(isSuccess)->{
+            listener.onComplete(isSuccess);
+        });
     }
 
     //---------------------------------------Item---------------------------------------------

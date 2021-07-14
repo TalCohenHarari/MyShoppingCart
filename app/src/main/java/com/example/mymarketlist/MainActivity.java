@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Pop the all prev pages to start over:
                 while(navController.popBackStack());
                 //Set user on Model to null
-                Model.instance.setUser(null,()->{});
+                Model.instance.setUser(null,(isSuccess)->{});
                 //Set item menu visible if he is np visible:
                 drawer.closeDrawer(GravityCompat.START);
                 navController.navigate(R.id.nav_loginFragment);

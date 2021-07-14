@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,7 +31,9 @@ public class LoginFragment extends Fragment {
     TextView newAccountTv;
     LoginViewModel loginViewModel;
     Dialog dialog;
+    Dialog resentEmailDialog;
     TextView isExistTv;
+    TextView forgotPassword;
     User user;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,19 +45,11 @@ public class LoginFragment extends Fragment {
         enterBtn= view.findViewById(R.id.login_enter_btn);
         newAccountTv= view.findViewById(R.id.login_new_account_tv);
         isExistTv = view.findViewById(R.id.login_validationText_tv);
+        forgotPassword = view.findViewById(R.id.login_forgot_password_tv);
+        resentEmailDialog = new Dialog(getContext());
         popupLoadingDialog();
         setUpProgressListener();
         isLoggedIn();
-
-//        user=new User();
-//        user.setEmail("edenhararicohen@walla.com");
-//        user.setDeleted(false);
-//        user.setAvatar("");
-//        user.setName("Eden");
-//        user.setPhone("0123456789");
-//        user.setPassword("123456");
-//        Model.instance.saveUser(user,"signUp",()->{});
-
 
         //ViewModel:
         //ViewModel:
@@ -64,7 +59,7 @@ public class LoginFragment extends Fragment {
         //Listeners:
         newAccountTv.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_signUpFragment));
         enterBtn.setOnClickListener(v->login());
-
+        forgotPassword.setOnClickListener(v->popupResentEmailDialog());
         return view;
     }
 
@@ -85,20 +80,22 @@ public class LoginFragment extends Fragment {
             isExistTv.setText("הכנס כתובת אימייל");
         else if(!emailEt.getText().toString().isEmpty() && passwordEt.getText().toString().isEmpty())
             isExistTv.setText("הכנס סיסמה");
-        else if(loginViewModel.isUserExist(emailEt.getText().toString(), passwordEt.getText().toString()))
-        {
+        else {
             dialog.show();
             isExistTv.setText("");
-            Model.instance.login(emailEt.getText().toString(), passwordEt.getText().toString(), () -> {
-
-                //Pop up login page after we connected:
-                while(Navigation.findNavController(view).popBackStack());
-                dialog.dismiss();
-                Navigation.findNavController(view).navigate(R.id.nav_itemsListFragment);
+            Model.instance.login(emailEt.getText().toString(), passwordEt.getText().toString(), (isSuccess) -> {
+                if(isSuccess) {
+                    //Pop up login page after we connected:
+                    while (Navigation.findNavController(view).popBackStack()) ;
+                    dialog.dismiss();
+                    Navigation.findNavController(view).navigate(R.id.nav_itemsListFragment);
+                }
+                else{
+                    dialog.dismiss();
+                    isExistTv.setText("כתובת האימייל או הסיסמה אינם נכונים");
+                }
             });
         }
-        else
-            isExistTv.setText("כתובת האימייל או הסיסמה אינם נכונים");
     }
 
     private void setUpProgressListener() {
@@ -124,6 +121,48 @@ public class LoginFragment extends Fragment {
         dialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
         ProgressBar pb = dialog.findViewById(R.id.loading_progressBar_pb);
         pb.setVisibility(View.VISIBLE);
+    }
+
+    private void popupResentEmailDialog() {
+
+        resentEmailDialog = new Dialog(getContext());
+        resentEmailDialog.setContentView(R.layout.popup_dialog_resent_email);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            resentEmailDialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.popup_dialog_background));
+        resentEmailDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        resentEmailDialog.setCancelable(true);
+        resentEmailDialog.getWindow().getAttributes().windowAnimations = R.style.popup_dialog_animation;
+        TextView textTv= resentEmailDialog.findViewById(R.id.resent_password_dialog_text_tv);
+        EditText dialogEmailEt= resentEmailDialog.findViewById(R.id.resent_password_dialog_email_et);
+        Button button= resentEmailDialog.findViewById(R.id.resent_password_enter_btn);
+        ImageView cancelImgV= resentEmailDialog.findViewById(R.id.resent_password_dialog_cancel_imgV);
+
+        //Listeners
+        cancelImgV.setOnClickListener(v->resentEmailDialog.dismiss());
+        ProgressBar pb = resentEmailDialog.findViewById(R.id.resent_password_dialog_progressBar_pb);
+        button.setOnClickListener(v->{
+            if(loginViewModel.isUserExistResentPassword(dialogEmailEt.getText().toString()))
+            {
+                button.setEnabled(false);
+                pb.setVisibility(View.VISIBLE);
+                textTv.setText("אנא המתן...");
+                Model.instance.resentPassword(dialogEmailEt.getText().toString(),(isSuccess)->
+                {
+                    if(isSuccess){
+                        pb.setVisibility(View.INVISIBLE);
+                        textTv.setText("הסיסמה נשלחה לכתובת האימייל בהצלחה!");
+//                        resentEmailDialog.dismiss();
+                    }
+                    else{
+                        button.setEnabled(true);
+                        pb.setVisibility(View.INVISIBLE);
+                        textTv.setText("אנא בדוק את כתובת האימייל");
+                    }
+                });
+            }
+        });
+        resentEmailDialog.show();
+
     }
 
     @Override

@@ -22,13 +22,13 @@ public class SignUpViewModel extends ViewModel {
     }
 
 
-        public boolean isUserNameExist(String userEmail) {
+    public boolean isUserNameExist(String userEmail) {
 
-        if(usersList.getValue()!=null) {
+        if(usersList.getValue()!=null)
             for (User user : usersList.getValue())
-                if (user.getEmail().equals(userEmail) && user.isDeleted())
+                if (user.getEmail().equals(userEmail) && !(user.isDeleted()))
                     return true;
-        }
+
         return false;
     }
 }

@@ -21,11 +21,21 @@ public class LoginViewModel extends ViewModel {
         return usersList;
     }
 
-    public static boolean isUserExist(String userEmail, String password){
+    public static boolean isUserExist(String userEmail,String password){
 
         if(usersList.getValue()!=null)
             for (User user : usersList.getValue())
-                if (user.getEmail().equals(userEmail) && user.password.equals(password) && !(user.isDeleted()))
+                if (user.getEmail().equals(userEmail) && user.getPassword().equals(password) && !(user.isDeleted()))
+                    return true;
+
+        return false;
+    }
+
+    public static boolean isUserExistResentPassword(String userEmail ){
+
+        if(usersList.getValue()!=null)
+            for (User user : usersList.getValue())
+                if (user.getEmail().equals(userEmail)  && !(user.isDeleted()))
                     return true;
 
         return false;

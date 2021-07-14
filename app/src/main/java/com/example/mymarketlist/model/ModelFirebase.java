@@ -36,7 +36,6 @@ public class ModelFirebase {
 
     private ModelFirebase() {}
 
-
     //--------------------------------------User--------------------------------------------
 
     public interface GetAllUsersListener {
@@ -63,7 +62,7 @@ public class ModelFirebase {
     }
 
     //Save and signUp:
-    public static void saveUser(User user, String action, Model.OnCompleteListener listener) {
+    public static void saveUser(User user, String action, Model.isLoginSuccessCompleteListener listener) {
 
         if (action.equals("signUp"))
         {
@@ -73,7 +72,7 @@ public class ModelFirebase {
                 public void onSuccess(AuthResult authResult) {
                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                     user.setId(firebaseUser.getUid());
-                    save(user,action,()->listener.onComplete());
+                    save(user,action,(isSuccess)->listener.onComplete(isSuccess));
                 }
             });
         }
@@ -82,29 +81,29 @@ public class ModelFirebase {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
             if(action.equals("updateEmail"))
-                currentUser.updateEmail(user.getEmail()).addOnCompleteListener(task -> { if (task.isSuccessful()) { save(user,action,()->listener.onComplete()); } });
+                currentUser.updateEmail(user.getEmail()).addOnCompleteListener(task -> { if (task.isSuccessful()) { save(user,action,(isSuccess)->listener.onComplete(isSuccess)); } });
             else if(action.equals("updatePassword"))
-                currentUser.updatePassword(user.getPassword()).addOnCompleteListener(task -> { if (task.isSuccessful()) { save(user,action,()->listener.onComplete()); } });
+                currentUser.updatePassword(user.getPassword()).addOnCompleteListener(task -> { if (task.isSuccessful()) { save(user,action,(isSuccess)->listener.onComplete(isSuccess)); } });
             else{
                 currentUser.updateEmail(user.getEmail()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        currentUser.updatePassword(user.getPassword()).addOnCompleteListener(task1 -> { if (task1.isSuccessful()) save(user,action,()->listener.onComplete()); });
+                        currentUser.updatePassword(user.getPassword()).addOnCompleteListener(task1 -> { if (task1.isSuccessful()) save(user,action,(isSuccess)->listener.onComplete(isSuccess)); });
                     }
                 });
             }
         }
         else if(action.equals("delete")) //delete user 'Auth'
         {
-            save(user,action,()->{
+            save(user,action,(isSuccess)->{
                 FirebaseUser deletedUser = FirebaseAuth.getInstance().getCurrentUser();
-                deletedUser.delete().addOnCompleteListener(task -> { if (task.isSuccessful()) { listener.onComplete(); } });});
+                deletedUser.delete().addOnCompleteListener(task -> { if (task.isSuccessful()) { listener.onComplete(true); } });});
         }
         else //If it's an update details:
             save(user,action,listener);
     }
 
-    public static void save(User user,String action ,Model.OnCompleteListener listener) {
+    public static void save(User user,String action ,Model.isLoginSuccessCompleteListener listener) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(userCollection).document(user.getId()).set(user.toJson()).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -114,12 +113,12 @@ public class ModelFirebase {
                     }}).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                listener.onComplete();
+                listener.onComplete(false);
             }
         });
     }
 
-    public static void login(String userEmail, String password, Model.OnCompleteListener listener) {
+    public static void login(String userEmail, String password, Model.isLoginSuccessCompleteListener listener) {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -128,10 +127,15 @@ public class ModelFirebase {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            getCurrentUser(listener);
+                            getCurrentUser((isSuccess)->listener.onComplete(isSuccess));
                         }
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onComplete(false);
+            }
+        });
     }
 
     public static void isLoggedIn(Model.OnCompleteListener listener) {
@@ -140,11 +144,11 @@ public class ModelFirebase {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Model.instance.loadingStateDialog.setValue(Model.LoadingState.loading);
-            getCurrentUser(()->listener.onComplete());
+            getCurrentUser((isSuccess)->listener.onComplete());
         }
     }
 
-    public static void getCurrentUser(Model.OnCompleteListener listener)
+    public static void getCurrentUser(Model.isLoginSuccessCompleteListener listener)
     {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -153,13 +157,35 @@ public class ModelFirebase {
         db.collection(userCollection).document(firebaseUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                Model.instance.setUser(User.create(documentSnapshot.getData()),()->listener.onComplete());
+                Model.instance.setUser(User.create(documentSnapshot.getData()),(isSuccess)->listener.onComplete(isSuccess));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onComplete(false);
             }
         });
     }
 
     public static void signOut(){
         FirebaseAuth.getInstance().signOut();
+    }
+
+
+    public static void resentPassword(String email, Model.onResentPasswordCompleteListener listener) {
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            listener.onComplete(true);
+                        } else {
+                            listener.onComplete(false);
+                        }
+                    }
+                });
     }
     //--------------------------------------Item--------------------------------------------
 
