@@ -12,7 +12,6 @@
         android:theme="@style/Theme.MyMarketList">
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustNothing"
             android:label="My Market List"
             android:theme="@style/Theme.MyMarketList.NoActionBar">
             <intent-filter>

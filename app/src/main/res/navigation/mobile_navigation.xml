@@ -31,7 +31,7 @@
     <fragment
         android:id="@+id/nav_newItemFragment"
         android:name="com.example.mymarketlist.ui.newItem.NewItemFragment"
-        android:label="פריט חדש"
+        android:label=" "
         tools:layout="@layout/fragment_new_item" />
     <fragment
         android:id="@+id/nav_allMyShoppingCartsFragment"
@@ -58,8 +58,8 @@
     <fragment
         android:id="@+id/nav_editItemFragment"
         android:name="com.example.mymarketlist.ui.editItemn.EditItemFragment"
-        android:label="fragment_edit_item"
-        tools:layout="@layout/fragment_edit_item" >
+        android:label=" "
+        tools:layout="@layout/fragment_edit_item">
         <argument
             android:name="itemId"
             app:argType="string" />
@@ -67,17 +67,17 @@
     <fragment
         android:id="@+id/nav_addItemToExistShoppingCartFragment"
         android:name="com.example.mymarketlist.ui.addItemToExistShoppingCart.AddItemToExistShoppingCartFragment"
-        tools:layout="@layout/fragment_add_item_to_exist_shopping_cart" >
+        android:label="הוספת מוצר לעגלה שלי"
+        tools:layout="@layout/fragment_add_item_to_exist_shopping_cart">
         <argument
             android:name="shoppingCartPosition"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/nav_loginFragment"
         android:name="com.example.mymarketlist.ui.login.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_nav_loginFragment_to_nav_itemsListFragment"
             app:destination="@id/nav_itemsListFragment" />
@@ -85,8 +85,7 @@
     <fragment
         android:id="@+id/nav_signUpFragment"
         android:name="com.example.mymarketlist.ui.signUp.SignUpFragment"
-        android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/action_nav_signUpFragment_to_nav_itemsListFragment"
             app:destination="@id/nav_itemsListFragment" />

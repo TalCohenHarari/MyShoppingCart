@@ -2,4 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/popupMenu_create_edit" android:title="הערה חדשה / ערוך הערה"/>
     <item android:id="@+id/popupMenu_delete" android:title="מחק הערה"/>
+    <item android:id="@+id/popupMenu_delete_for_ever" android:title="מחק מוצר מהעגלה"/>
 </menu>

@@ -51,12 +51,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_homeFragment:
-//                if(selectedItem!=R.id.menu_homeFragment){
-                    selectedItem=R.id.menu_homeFragment;
-                    while (navController.popBackStack()) ;
-                    navController.navigate(R.id.nav_homeFragment);
-//                }
+            case R.id.menu_newItem:
+                    selectedItem=R.id.menu_newItem;
+                    navController.navigate(R.id.nav_newItemFragment);
                 drawer.closeDrawer(GravityCompat.START);
                 break;
             case R.id.menu_itemsListFragment:

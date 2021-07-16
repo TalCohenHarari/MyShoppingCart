@@ -4,17 +4,17 @@
     tools:showIn="navigation_view" >
 
 
-    <item android:title="כללי" >
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/menu_homeFragment"
-                    android:icon="@drawable/home_icon"
-                    android:title="עמוד הבית" />
+<!--    <item android:title="כללי" >-->
+<!--        <menu>-->
+<!--            <group android:checkableBehavior="single">-->
+<!--                <item-->
+<!--                    android:id="@+id/menu_homeFragment"-->
+<!--                    android:icon="@drawable/home_icon"-->
+<!--                    android:title="עמוד הבית" />-->
 
-            </group>
-        </menu>
-    </item>
+<!--            </group>-->
+<!--        </menu>-->
+<!--    </item>-->
 
 
     <item android:title="רשימות" >
@@ -32,6 +32,10 @@
                     android:id="@+id/menu_allMyShoppingCartsFragment"
                     android:icon="@drawable/old_shopping_cart_icon"
                     android:title="כל העגלות הקודמות" />
+                <item
+                    android:id="@+id/menu_newItem"
+                    android:icon="@drawable/circle_add_icon"
+                    android:title="הוספת מוצר חדש" />
             </group>
         </menu>
     </item>
@@ -40,10 +44,10 @@
     <item android:title="פרופיל אישי" >
         <menu>
             <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/menu_myAccount"
-                    android:icon="@drawable/person_icon"
-                    android:title="החשבון שלי" />
+<!--                <item-->
+<!--                    android:id="@+id/menu_myAccount"-->
+<!--                    android:icon="@drawable/person_icon"-->
+<!--                    android:title="החשבון שלי" />-->
                 <item
                     android:id="@+id/menu_logout"
                     android:icon="@drawable/logout_icon"
